@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "세라프",
+    "slug": "seraph",
+    "scheme": "seraph",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": [
+      "expo-router"
+    ]
+  }
+}

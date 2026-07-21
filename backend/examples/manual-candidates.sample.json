@@ -1,0 +1,13 @@
+[
+  {
+    "title": "삼성 WW90T3000KW 세탁기 사용 설명서",
+    "manufacturerName": "삼성",
+    "modelName": "WW90T3000KW",
+    "sourceManualUrl": "https://example.com/manuals/samsung-ww90t3000kw",
+    "sourcePdfUrl": "https://example.com/manuals/samsung-ww90t3000kw.pdf",
+    "sourceCategorySlugPath": "household-appliances/washing-machines",
+    "categoryPath": ["가전", "세탁기", "삼성"],
+    "rightsStatus": "needs_permission",
+    "importMode": "metadata_only"
+  }
+]

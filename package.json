@@ -1,0 +1,52 @@
+{
+  "name": "seraph-rn",
+  "version": "0.1.0",
+  "private": true,
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "backend:dev": "tsx backend/src/server.ts",
+    "backend:check": "tsc -p backend/tsconfig.json --noEmit",
+    "check:app": "tsc -p tsconfig.json --noEmit",
+    "check": "npm run check:app && npm run backend:check",
+    "db:start": "docker compose up -d postgres",
+    "db:stop": "docker compose down",
+    "db:status": "docker compose ps",
+    "db:logs": "docker compose logs -f postgres",
+    "db:shell": "docker compose exec postgres psql -U seraph -d seraph",
+    "import:manuall:categories": "tsx backend/src/importers/manuall.ts",
+    "import:manuall:categories:dry": "tsx backend/src/importers/manuall.ts --dry-run",
+    "import:manual-candidates": "tsx backend/src/importers/manualCandidates.ts"
+  },
+  "dependencies": {
+    "@expo/metro-runtime": "57.0.2",
+    "@expo/vector-icons": "^15.0.2",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "expo": "57.0.1",
+    "expo-router": "57.0.2",
+    "express": "^5.2.1",
+    "pg": "^8.22.0",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "react-native": "0.86.0",
+    "react-native-gesture-handler": "3.0.2",
+    "react-native-reanimated": "4.5.0",
+    "react-native-safe-area-context": "5.8.0",
+    "react-native-screens": "4.25.2",
+    "react-native-web": "0.21.2",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.1.0",
+    "@types/pg": "^8.20.0",
+    "@types/react": "19.2.17",
+    "tsx": "^4.22.4",
+    "typescript": "6.0.3"
+  }
+}
