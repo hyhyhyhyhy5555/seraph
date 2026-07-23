@@ -7,7 +7,7 @@ import express, {
 } from "express";
 import { z } from "zod";
 
-import { query } from "./db";
+import { closePool, query } from "./db";
 import { env } from "./env";
 
 type CategoryRow = {
@@ -93,7 +93,12 @@ const rightsStatusSchema = z.enum([
 
 const app = express();
 
-app.use(cors());
+app.set("trust proxy", env.trustProxy);
+app.use(
+  cors({
+    origin: env.corsOrigins.length > 0 ? env.corsOrigins : true
+  })
+);
 app.use(express.json({ limit: "1mb" }));
 
 const asyncHandler =
@@ -369,6 +374,16 @@ function buildRagAnswer(question: string, evidence: RagEvidence[]) {
     citations
   };
 }
+
+app.get(
+  "/live",
+  (_request, response) => {
+    response.json({
+      ok: true,
+      service: "seraph-backend"
+    });
+  }
+);
 
 app.get(
   "/health",
@@ -1279,6 +1294,41 @@ app.use((error: unknown, _request: Request, response: Response, _next: NextFunct
   });
 });
 
-app.listen(env.port, () => {
+const server = app.listen(env.port, () => {
   console.log(`Seraph backend listening on http://localhost:${env.port}`);
 });
+
+let isShuttingDown = false;
+
+async function shutdown(signal: "SIGINT" | "SIGTERM") {
+  if (isShuttingDown) {
+    return;
+  }
+
+  isShuttingDown = true;
+  console.log(`${signal} received. Shutting down Seraph backend.`);
+
+  const forceExitTimer = setTimeout(() => {
+    console.error("Graceful shutdown timed out.");
+    process.exit(1);
+  }, 10_000);
+  forceExitTimer.unref();
+
+  server.close(async (error) => {
+    try {
+      await closePool();
+    } finally {
+      clearTimeout(forceExitTimer);
+
+      if (error) {
+        console.error(error);
+        process.exit(1);
+      }
+
+      process.exit(0);
+    }
+  });
+}
+
+process.on("SIGINT", () => void shutdown("SIGINT"));
+process.on("SIGTERM", () => void shutdown("SIGTERM"));

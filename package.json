@@ -8,10 +8,16 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
+    "build": "npm run build:web && npm run backend:build",
+    "build:web": "expo export --platform web --output-dir dist/web",
     "backend:dev": "tsx backend/src/server.ts",
+    "backend:build": "tsc -p backend/tsconfig.build.json",
     "backend:check": "tsc -p backend/tsconfig.json --noEmit",
+    "backend:start": "node dist/backend/server.js",
     "check:app": "tsc -p tsconfig.json --noEmit",
     "check": "npm run check:app && npm run backend:check",
+    "audit:prod": "npm audit --omit=dev --audit-level=high",
+    "docker:build": "docker build --tag seraph-backend:local .",
     "db:start": "docker compose up -d postgres",
     "db:stop": "docker compose down",
     "db:status": "docker compose ps",
@@ -23,6 +29,10 @@
     "import:manual-candidates:promote": "tsx backend/src/importers/promoteManualCandidates.ts",
     "import:manual-text": "tsx backend/src/importers/manualText.ts",
     "import:manual-pdf": "tsx backend/src/importers/manualPdf.ts"
+  },
+  "engines": {
+    "node": ">=22.13.0 <25",
+    "npm": ">=10"
   },
   "dependencies": {
     "@expo/metro-runtime": "57.0.2",

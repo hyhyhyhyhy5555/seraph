@@ -58,3 +58,10 @@ Manuall 전체 PDF/텍스트를 우리 DB에 바로 복제하지 않습니다. �
 권한을 받은 텍스트 export나 사용자 제공 텍스트는 `npm run import:manual-text`로 `manuals`, `manual_pages`, `manual_chunks`에 적재할 수 있습니다.
 권한 있게 확보한 로컬 PDF 파일은 `npm run import:manual-pdf`로 텍스트를 추출해 같은 RAG 테이블에 적재할 수 있습니다.
 제3자 출처의 권한 상태 변경은 `PATCH /api/source-sites/:id/rights`로 처리하고, 변경 이력은 `source_rights_events`에 남깁니다.
+
+## CI 및 배포 준비
+
+- GitHub Actions는 PR과 `main` 푸시에서 앱·백엔드 검사, 웹/백엔드 빌드, Docker 이미지 빌드를 검증합니다.
+- 태그(`v*`) 또는 수동 실행으로 웹 정적 파일, 백엔드 실행 파일, Docker 이미지 아카이브를 배포 산출물로 만들 수 있습니다.
+- 로컬 배포 형태는 `docker compose up --build`로 백엔드와 PostgreSQL을 함께 실행할 수 있습니다.
+- 실제 클라우드, EAS, 앱스토어 배포에 필요한 후속 설정은 [`docs/deployment.md`](docs/deployment.md)를 확인합니다.
