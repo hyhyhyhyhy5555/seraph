@@ -1,0 +1,15 @@
+[
+  {
+    "title": "권한 제공 샘플 PDF 세탁기 설명서",
+    "categorySlugPath": "appliances/washer",
+    "manufacturerName": "샘플전자",
+    "modelName": "SW-2000",
+    "languageCode": "ko",
+    "sourceUrl": "https://example.com/authorized/manuals/sample-washer-pdf",
+    "pdfUrl": "https://example.com/authorized/manuals/sample-washer-pdf.pdf",
+    "pdfPath": "/Users/hy/Desktop/seraph_rn/backend/examples/sample-authorized-washer.pdf",
+    "sourceType": "user_upload",
+    "rightsStatus": "user_provided",
+    "summary": "사용자가 권한을 확인해 제공한 샘플 PDF 세탁기 설명서입니다."
+  }
+]

@@ -42,14 +42,19 @@ Manuall 전체 PDF/텍스트를 우리 DB에 바로 복제하지 않습니다. �
 - 출처 사이트 등록
 - 카테고리 후보 저장
 - 내부 카테고리와 외부 카테고리 매핑
-- 설명서 후보 URL 관리
+- 설명서 후보 URL 및 PDF 링크 메타데이터 관리
+- 후보를 `manuals.ingestion_status = pending` 설명서로 등록
 - 수집 작업 이력 및 차단 사유 기록
 
 허가 후 가능:
 
-- PDF 링크 저장
 - PDF 파일 저장
 - PDF 텍스트 추출
 - RAG 청크/임베딩 생성
 
 현재 Manuall은 `metadata_only`, `needs_permission`으로 관리합니다. 서버 측 직접 접근은 Cloudflare/403으로 막힐 수 있으며, 이 경우 `import_jobs.status = blocked`로 기록합니다.
+
+수집 후보는 `npm run import:manual-candidates`로 넣고, `npm run import:manual-candidates:promote`로 검색 가능한 설명서 메타데이터까지 올립니다. 이 단계에서는 `manual_pages`, `manual_chunks`를 만들지 않으므로 RAG 본문 검색에는 포함되지 않습니다.
+권한을 받은 텍스트 export나 사용자 제공 텍스트는 `npm run import:manual-text`로 `manuals`, `manual_pages`, `manual_chunks`에 적재할 수 있습니다.
+권한 있게 확보한 로컬 PDF 파일은 `npm run import:manual-pdf`로 텍스트를 추출해 같은 RAG 테이블에 적재할 수 있습니다.
+제3자 출처의 권한 상태 변경은 `PATCH /api/source-sites/:id/rights`로 처리하고, 변경 이력은 `source_rights_events`에 남깁니다.

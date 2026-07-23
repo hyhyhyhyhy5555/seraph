@@ -11,6 +11,7 @@
 - `contact_requests`: 문의하기 요청입니다.
 - `manual_requests`: 사용자가 찾지 못한 설명서 요청입니다.
 - `source_sites`: Manuall 같은 외부 데이터 출처와 권리/수집 정책입니다. 권한 문서나 라이선스 URL도 여기에 남깁니다.
+- `source_rights_events`: 외부 출처 권한 상태 변경 이력입니다. 이전/새 권한 상태, 근거 URL, 검토자, 사유를 저장합니다.
 - `source_categories`: 외부 사이트에서 발견한 카테고리 후보입니다. `category_kind`로 대분류, 제품군, 제조사형 노드를 구분합니다.
 - `category_source_mappings`: 외부 카테고리와 세라프 내부 카테고리의 매핑입니다.
 - `manual_import_candidates`: 외부 사이트에서 발견한 설명서 후보 메타데이터입니다.
@@ -50,4 +51,17 @@ Manuall 같은 제3자 사이트는 기본적으로 `metadata_only`로 취급합
 - `metadata_only`: 제목, 제조사, 모델명, 원문 URL, PDF URL 같은 후보 메타데이터만 저장합니다.
 - `full_text`: PDF 저장, 페이지 텍스트 추출, RAG 청크 생성을 진행할 수 있는 상태입니다. 출처 권한이 `allowed` 또는 `licensed`로 확인된 뒤에만 사용합니다.
 
-허가받은 파일 export는 `manual_import_candidates`에 먼저 넣고, 이후 별도 PDF/text ingestion 단계에서 `manuals`, `manual_pages`, `manual_chunks`로 승격합니다.
+허가 전 후보도 `manual_import_candidates`에 먼저 넣고, `import:manual-candidates:promote`로 `manuals` 메타데이터까지 승격할 수 있습니다. 이때 `manuals.ingestion_status = pending`이고 본문 테이블은 비워둡니다.
+
+본문 적재 시 권장 흐름:
+
+1. `manual_import_candidates`에 원문/PDF 후보를 저장합니다.
+2. 확인된 카테고리 매핑만 사용해 `import:manual-candidates:promote`로 `manuals` 메타데이터를 만듭니다.
+3. 출처별 권한 문서 또는 제휴 상태를 `source_sites`에 기록합니다.
+4. 권한이 확인된 텍스트 export는 `import:manual-text`로 본문을 적재합니다.
+5. 권한이 확인된 로컬 PDF 파일은 `import:manual-pdf`로 텍스트 추출 후 본문을 적재합니다.
+6. 본문이 적재된 설명서는 `manuals.ingestion_status = ready`가 되고 RAG 검색 대상에 포함됩니다.
+
+권한 상태 변경은 직접 SQL로 덮어쓰기보다 `PATCH /api/source-sites/:id/rights`를 사용합니다. 그래야 `source_rights_events`에 변경 근거가 남습니다.
+
+`manuals.pdf_url`은 사용자가 볼 원본 PDF 링크이고, `manuals.storage_path`는 우리가 권한 있게 확보한 로컬/스토리지 파일 경로입니다. 원격 URL을 곧바로 긁어서 저장하는 흐름은 두지 않습니다.

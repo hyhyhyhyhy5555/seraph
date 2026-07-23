@@ -1,14 +1,25 @@
 export const colors = {
-  background: "#F6FBFF",
+  background: "#F3F6FA",
   surface: "#FFFFFF",
-  surfaceBlue: "#EAF6FF",
-  surfaceBlueStrong: "#D9EEFF",
-  primary: "#2585D9",
-  primaryDark: "#1469B0",
-  text: "#17212B",
-  mutedText: "#697A8A",
-  faintText: "#93A4B5",
-  border: "#D7E8F5",
-  success: "#2D9C74",
-  warning: "#C4841D"
-};
+  surfaceRaised: "#FFFFFF",
+  surfaceSubtle: "#F7F9FC",
+  surfaceAccent: "#EAF3FB",
+  surfaceAccentStrong: "#D9EAF8",
+  primary: "#1D5F99",
+  primaryPressed: "#154B79",
+  primarySoft: "#E4F0FA",
+  onPrimary: "#FFFFFF",
+  text: "#142536",
+  textSecondary: "#526476",
+  textTertiary: "#8190A0",
+  border: "#DCE4EC",
+  borderStrong: "#BFCBD7",
+  success: "#1D7A5A",
+  successSoft: "#E5F5EF",
+  danger: "#B54040",
+  dangerSoft: "#FCECEC",
+  warning: "#9A6518",
+  warningSoft: "#FFF4DF"
+} as const;
+
+export type ColorToken = keyof typeof colors;

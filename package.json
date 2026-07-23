@@ -19,7 +19,10 @@
     "db:shell": "docker compose exec postgres psql -U seraph -d seraph",
     "import:manuall:categories": "tsx backend/src/importers/manuall.ts",
     "import:manuall:categories:dry": "tsx backend/src/importers/manuall.ts --dry-run",
-    "import:manual-candidates": "tsx backend/src/importers/manualCandidates.ts"
+    "import:manual-candidates": "tsx backend/src/importers/manualCandidates.ts",
+    "import:manual-candidates:promote": "tsx backend/src/importers/promoteManualCandidates.ts",
+    "import:manual-text": "tsx backend/src/importers/manualText.ts",
+    "import:manual-pdf": "tsx backend/src/importers/manualPdf.ts"
   },
   "dependencies": {
     "@expo/metro-runtime": "57.0.2",

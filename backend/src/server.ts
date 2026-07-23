@@ -78,6 +78,19 @@ type RagEvidence = {
   score: number;
 };
 
+const importPolicySchema = z.enum([
+  "metadata_only",
+  "licensed_full_text",
+  "official_full_text",
+  "blocked"
+]);
+const rightsStatusSchema = z.enum([
+  "needs_permission",
+  "allowed",
+  "licensed",
+  "blocked"
+]);
+
 const app = express();
 
 app.use(cors());
@@ -162,6 +175,22 @@ function toPositiveInteger(value: unknown, fallback: number, max: number) {
   return Math.min(parsed, max);
 }
 
+function defaultImportPolicyForRights(rightsStatus: z.infer<typeof rightsStatusSchema>) {
+  if (rightsStatus === "allowed") {
+    return "official_full_text";
+  }
+
+  if (rightsStatus === "licensed") {
+    return "licensed_full_text";
+  }
+
+  if (rightsStatus === "blocked") {
+    return "blocked";
+  }
+
+  return "metadata_only";
+}
+
 function extractSearchTerms(question: string) {
   const normalized = question
     .toLowerCase()
@@ -228,10 +257,23 @@ async function retrieveRagEvidence(question: string, limit = 5) {
             coalesce((
               select sum(
                 case
-                  when term ~ '[0-9]' and manual_chunks.content ilike '%' || term || '%' then 30
+                  when
+                    manual_chunks.content ilike '%' || term || '%' and
+                    term ~ '[0-9]' and
+                    term ~ '[[:alpha:]]' and
+                    length(term) <= 8
+                  then 30
+                  when
+                    manual_chunks.content ilike '%' || term || '%' and
+                    term ~ '^[0-9]+$'
+                  then 4
+                  when
+                    manual_chunks.content ilike '%' || term || '%' and
+                    length(term) >= 3
+                  then 12
+                  when manual_chunks.content ilike '%' || term || '%' then 3
                   else 0
-                end +
-                case when manual_chunks.content ilike '%' || term || '%' then 8 else 0 end
+                end
               )
               from unnest($3::text[]) as term
             ), 0)
@@ -272,7 +314,7 @@ async function retrieveRagEvidence(question: string, limit = 5) {
         (content_score + metadata_score) as score
       from ranked_chunks
       where content_score + metadata_score > 0
-      order by content_score desc, content_score + metadata_score desc, title asc, "pageStart" asc nulls last
+      order by content_score + metadata_score desc, content_score desc, title asc, "pageStart" asc nulls last
       limit $4
     `,
     [searchText, exactPattern, terms, limit]
@@ -417,6 +459,7 @@ app.get(
         source_sites.license_url as "licenseUrl",
         source_sites.permission_document_url as "permissionDocumentUrl",
         source_sites.permission_checked_at as "permissionCheckedAt",
+        source_sites.permission_checked_by as "permissionCheckedBy",
         source_sites.notes,
         coalesce(category_counts.category_count, 0)::int as "categoryCount",
         coalesce(candidate_counts.candidate_count, 0)::int as "candidateCount",
@@ -505,6 +548,263 @@ app.get(
     response.json({
       data: buildSourceCategoryTree(result.rows)
     });
+  })
+);
+
+app.get(
+  "/api/source-sites/:id/rights-events",
+  asyncHandler(async (request, response) => {
+    const limit = toPositiveInteger(request.query.limit, 50, 200);
+
+    const result = await query(
+      `
+        select
+          id,
+          previous_import_policy as "previousImportPolicy",
+          new_import_policy as "newImportPolicy",
+          previous_rights_status as "previousRightsStatus",
+          new_rights_status as "newRightsStatus",
+          license_url as "licenseUrl",
+          permission_document_url as "permissionDocumentUrl",
+          reviewed_by as "reviewedBy",
+          reason,
+          metadata,
+          created_at as "createdAt"
+        from source_rights_events
+        where source_site_id = $1
+        order by created_at desc
+        limit $2
+      `,
+      [request.params.id, limit]
+    );
+
+    response.json({ data: result.rows });
+  })
+);
+
+const updateSourceRightsSchema = z
+  .object({
+    rightsStatus: rightsStatusSchema,
+    importPolicy: importPolicySchema.optional(),
+    licenseUrl: z.string().url().nullable().optional(),
+    permissionDocumentUrl: z.string().url().nullable().optional(),
+    permissionCheckedBy: z.string().min(1).max(120).optional(),
+    notes: z.string().max(4000).optional(),
+    reason: z.string().min(1).max(2000),
+    metadata: z.record(z.string(), z.unknown()).default({})
+  })
+  .superRefine((value, context) => {
+    const opensFullText =
+      value.rightsStatus === "allowed" || value.rightsStatus === "licensed";
+
+    if (opensFullText && !value.licenseUrl && !value.permissionDocumentUrl) {
+      context.addIssue({
+        code: "custom",
+        path: ["permissionDocumentUrl"],
+        message:
+          "allowed/licensed 상태로 변경하려면 licenseUrl 또는 permissionDocumentUrl이 필요합니다."
+      });
+    }
+  });
+
+app.patch(
+  "/api/source-sites/:id/rights",
+  asyncHandler(async (request, response) => {
+    const body = updateSourceRightsSchema.parse(request.body);
+    const nextImportPolicy =
+      body.importPolicy ?? defaultImportPolicyForRights(body.rightsStatus);
+    const checkedAt =
+      body.rightsStatus === "needs_permission" ? null : new Date().toISOString();
+    const checkedBy =
+      body.rightsStatus === "needs_permission" ? null : body.permissionCheckedBy ?? null;
+
+    const result = await query(
+      `
+        with current_source as (
+          select
+            id,
+            import_policy,
+            rights_status,
+            license_url,
+            permission_document_url,
+            permission_checked_by,
+            notes
+          from source_sites
+          where id = $1
+        ),
+        updated_source as (
+          update source_sites
+          set
+            import_policy = $2,
+            rights_status = $3,
+            license_url = $4,
+            permission_document_url = $5,
+            permission_checked_at = $6,
+            permission_checked_by = $7,
+            notes = $8
+          from current_source
+          where source_sites.id = current_source.id
+          returning
+            source_sites.*,
+            current_source.import_policy as previous_import_policy,
+            current_source.rights_status as previous_rights_status
+        ),
+        rights_event as (
+          insert into source_rights_events (
+            source_site_id,
+            previous_import_policy,
+            new_import_policy,
+            previous_rights_status,
+            new_rights_status,
+            license_url,
+            permission_document_url,
+            reviewed_by,
+            reason,
+            metadata
+          )
+          select
+            updated_source.id,
+            updated_source.previous_import_policy,
+            updated_source.import_policy,
+            updated_source.previous_rights_status,
+            updated_source.rights_status,
+            updated_source.license_url,
+            updated_source.permission_document_url,
+            $9,
+            $10,
+            $11::jsonb
+          from updated_source
+          returning
+            id,
+            previous_import_policy,
+            new_import_policy,
+            previous_rights_status,
+            new_rights_status,
+            license_url,
+            permission_document_url,
+            reviewed_by,
+            reason,
+            metadata,
+            created_at
+        )
+        select json_build_object(
+          'sourceSite',
+          json_build_object(
+            'id', updated_source.id,
+            'name', updated_source.name,
+            'baseUrl', updated_source.base_url,
+            'importPolicy', updated_source.import_policy,
+            'rightsStatus', updated_source.rights_status,
+            'licenseUrl', updated_source.license_url,
+            'permissionDocumentUrl', updated_source.permission_document_url,
+            'permissionCheckedAt', updated_source.permission_checked_at,
+            'permissionCheckedBy', updated_source.permission_checked_by,
+            'notes', updated_source.notes
+          ),
+          'event',
+          json_build_object(
+            'id', rights_event.id,
+            'previousImportPolicy', rights_event.previous_import_policy,
+            'newImportPolicy', rights_event.new_import_policy,
+            'previousRightsStatus', rights_event.previous_rights_status,
+            'newRightsStatus', rights_event.new_rights_status,
+            'licenseUrl', rights_event.license_url,
+            'permissionDocumentUrl', rights_event.permission_document_url,
+            'reviewedBy', rights_event.reviewed_by,
+            'reason', rights_event.reason,
+            'metadata', rights_event.metadata,
+            'createdAt', rights_event.created_at
+          )
+        ) as data
+        from updated_source
+        join rights_event on true
+      `,
+      [
+        request.params.id,
+        nextImportPolicy,
+        body.rightsStatus,
+        body.licenseUrl ?? null,
+        body.permissionDocumentUrl ?? null,
+        checkedAt,
+        checkedBy,
+        body.notes ?? null,
+        body.permissionCheckedBy ?? null,
+        body.reason,
+        JSON.stringify(body.metadata)
+      ]
+    );
+
+    if (result.rowCount === 0) {
+      response.status(404).json({ error: "Source site not found" });
+      return;
+    }
+
+    response.json({ data: result.rows[0].data });
+  })
+);
+
+app.get(
+  "/api/import-jobs",
+  asyncHandler(async (request, response) => {
+    const sourceSiteId =
+      typeof request.query.sourceSiteId === "string" ? request.query.sourceSiteId : "";
+    const status = typeof request.query.status === "string" ? request.query.status : "";
+    const jobType = typeof request.query.jobType === "string" ? request.query.jobType : "";
+    const limit = toPositiveInteger(request.query.limit, 50, 200);
+
+    const params: unknown[] = [];
+    const filters: string[] = [];
+
+    if (sourceSiteId) {
+      params.push(sourceSiteId);
+      filters.push(`import_jobs.source_site_id = $${params.length}`);
+    }
+
+    if (status) {
+      params.push(status);
+      filters.push(`import_jobs.status = $${params.length}`);
+    }
+
+    if (jobType) {
+      params.push(jobType);
+      filters.push(`import_jobs.job_type = $${params.length}`);
+    }
+
+    params.push(limit);
+    const where = filters.length > 0 ? `where ${filters.join(" and ")}` : "";
+
+    const result = await query(
+      `
+        select
+          import_jobs.id,
+          import_jobs.job_type as "jobType",
+          import_jobs.scope_url as "scopeUrl",
+          import_jobs.status,
+          import_jobs.requested_mode as "requestedMode",
+          import_jobs.started_at as "startedAt",
+          import_jobs.finished_at as "finishedAt",
+          import_jobs.found_count as "foundCount",
+          import_jobs.imported_count as "importedCount",
+          import_jobs.skipped_count as "skippedCount",
+          import_jobs.error_message as "errorMessage",
+          import_jobs.metadata,
+          import_jobs.created_at as "createdAt",
+          case when source_sites.id is null then null else json_build_object(
+            'id', source_sites.id,
+            'name', source_sites.name,
+            'rightsStatus', source_sites.rights_status,
+            'importPolicy', source_sites.import_policy
+          ) end as "sourceSite"
+        from import_jobs
+        left join source_sites on source_sites.id = import_jobs.source_site_id
+        ${where}
+        order by import_jobs.created_at desc
+        limit $${params.length}
+      `,
+      params
+    );
+
+    response.json({ data: result.rows });
   })
 );
 

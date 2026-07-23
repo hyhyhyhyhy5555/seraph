@@ -1,27 +1,23 @@
-import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { StyleSheet, View } from "react-native";
 
+import { Icon, type IconName } from "@/components/ui";
 import { colors } from "@/theme/colors";
+import { radii } from "@/theme/tokens";
 
 type TabIconProps = {
   focused: boolean;
-  name: keyof typeof Ionicons.glyphMap;
-  focusedName: keyof typeof Ionicons.glyphMap;
+  focusedName: IconName;
+  name: IconName;
 };
 
-function TabIcon({ focused, name, focusedName }: TabIconProps) {
+function TabIcon({ focused, focusedName, name }: TabIconProps) {
   return (
-    <View
-      style={[
-        styles.iconFrame,
-        focused ? styles.iconFrameFocused : styles.iconFrameIdle
-      ]}
-    >
-      <Ionicons
+    <View style={[styles.iconFrame, focused && styles.iconFrameFocused]}>
+      <Icon
         name={focused ? focusedName : name}
         size={focused ? 23 : 22}
-        color={focused ? colors.primaryDark : colors.mutedText}
+        color={focused ? "primary" : "textTertiary"}
       />
     </View>
   );
@@ -33,28 +29,18 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.mutedText,
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: "800",
-          marginTop: 4
-        },
-        tabBarStyle: {
-          height: 76,
-          paddingBottom: 12,
-          paddingTop: 8,
-          borderTopColor: colors.border,
-          backgroundColor: colors.surface
-        },
-        tabBarItemStyle: {
-          paddingVertical: 4
-        }
+        tabBarInactiveTintColor: colors.textTertiary,
+        tabBarHideOnKeyboard: true,
+        tabBarLabelStyle: styles.label,
+        tabBarStyle: styles.tabBar,
+        tabBarItemStyle: styles.tabItem
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: "검색",
+          tabBarAccessibilityLabel: "설명서 검색 탭",
           tabBarIcon: ({ focused }) => (
             <TabIcon focused={focused} name="search-outline" focusedName="search" />
           )
@@ -63,7 +49,8 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="chat"
         options={{
-          title: "채팅",
+          title: "AI 채팅",
+          tabBarAccessibilityLabel: "설명서 AI 채팅 탭",
           tabBarIcon: ({ focused }) => (
             <TabIcon
               focused={focused}
@@ -77,8 +64,9 @@ export default function TabsLayout() {
         name="menu"
         options={{
           title: "메뉴",
+          tabBarAccessibilityLabel: "서비스 메뉴 탭",
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} name="menu-outline" focusedName="menu" />
+            <TabIcon focused={focused} name="grid-outline" focusedName="grid" />
           )
         }}
       />
@@ -87,17 +75,29 @@ export default function TabsLayout() {
 }
 
 const styles = StyleSheet.create({
+  tabBar: {
+    backgroundColor: colors.surface,
+    borderTopColor: colors.border,
+    height: 76,
+    paddingBottom: 10,
+    paddingTop: 7
+  },
+  tabItem: {
+    paddingVertical: 3
+  },
+  label: {
+    fontSize: 12,
+    fontWeight: "700",
+    marginTop: 3
+  },
   iconFrame: {
     alignItems: "center",
-    borderRadius: 999,
-    height: 34,
+    borderRadius: radii.pill,
+    height: 32,
     justifyContent: "center",
-    width: 46
+    width: 52
   },
   iconFrameFocused: {
-    backgroundColor: colors.surfaceBlueStrong
-  },
-  iconFrameIdle: {
-    backgroundColor: "transparent"
+    backgroundColor: colors.primarySoft
   }
 });
