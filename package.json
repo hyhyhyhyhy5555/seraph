@@ -46,7 +46,7 @@
     "js-tiktoken": "^1.0.21",
     "openai": "^6.48.0",
     "pg": "^8.22.0",
-    "react": "19.2.7",
+    "react": "19.2.8",
     "react-dom": "19.2.7",
     "react-native": "0.86.0",
     "react-native-gesture-handler": "3.0.2",
