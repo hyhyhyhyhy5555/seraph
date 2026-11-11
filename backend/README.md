@@ -16,7 +16,15 @@ npm run db:start
 - host: `localhost`
 - port: `5432`
 
-`docker-compose.yml`은 로컬에 바로 실행 가능한 `postgres:17` 이미지를 사용합니다. RAG 검색을 위해 `manual_chunks.embedding double precision[]` 컬럼과 `match_manual_chunks` 함수를 포함합니다.
+`docker-compose.yml`은 PostgreSQL 17과 pgvector가 포함된 이미지를 사용합니다. RAG 검색을 위해 `manual_chunks.embedding vector(1024)`, cosine HNSW 인덱스와 `match_manual_chunks` 함수를 포함합니다.
+
+기존 볼륨에 새 마이그레이션을 적용할 때:
+
+```bash
+docker compose exec -T postgres \
+  psql -v ON_ERROR_STOP=1 -U seraph -d seraph \
+  < db/migrations/009_manual_revisions_and_vector_search.sql
+```
 
 ## API Server
 
@@ -49,14 +57,15 @@ npm run backend:dev
 
 ## Current RAG Behavior
 
-현재 `/api/chat/ask`는 LLM 없이 동작하는 1차 RAG입니다.
+현재 `/api/chat/ask`는 LLM 없이 근거 청크를 반환하는 RAG입니다.
 
-1. 질문에서 검색어를 추출합니다.
-2. `manual_chunks.content`, 설명서 제목, 모델명, 제조사, 카테고리를 키워드로 점수화합니다.
-3. 가장 관련 높은 청크를 답변 본문으로 사용합니다.
-4. 출처는 `citations`에 설명서, 제조사, 페이지, PDF 링크 형태로 반환합니다.
+1. `OPENAI_API_KEY`가 있으면 질문을 같은 모델/차원으로 임베딩합니다.
+2. pgvector cosine 검색과 키워드 검색을 각각 수행합니다.
+3. Reciprocal Rank Fusion으로 두 결과를 결합합니다.
+4. `manualId` 또는 `revisionId`가 전달되면 해당 설명서 버전으로 제한합니다.
+5. 출처는 설명서 revision, 제조사, 페이지, PDF 링크 형태로 반환합니다.
 
-OpenAI 임베딩/답변 생성을 붙일 때는 `retrieveRagEvidence` 결과를 LLM context로 넘기면 됩니다.
+API 키가 없거나 임베딩 호출이 실패하면 기존 키워드 검색으로 폴백합니다. 답변 생성 모델을 추가할 때는 `retrieveRagEvidence` 결과를 context로 넘기면 됩니다.
 
 ## Manuall Importer
 
@@ -144,6 +153,15 @@ Manuall 같은 제3자 출처를 `--source="Manuall KR"`로 지정해 넣으려�
 
 로컬에 확보한 PDF 파일은 `pdftotext`를 사용해 페이지 텍스트를 추출한 뒤 같은 RAG 테이블로 적재합니다.
 
+PDF importer는 다음을 함께 처리합니다.
+
+- 파일 SHA-256, 크기, PDF 메타데이터 기록
+- `manuals`와 `manual_revisions` 분리
+- 목차 기반 `manual_sections` 생성
+- 표지/목차를 제외한 페이지별 원문 저장
+- 절차, 경고, 참고, 문제해결 유형을 보존한 의미 기반 청킹
+- 문서/소프트웨어/절 경로가 포함된 임베딩 전용 텍스트 생성
+
 ```bash
 npm run import:manual-pdf -- \
   --file=/Users/hy/Desktop/seraph_rn/backend/examples/manual-pdf.sample.json
@@ -172,6 +190,34 @@ npm run import:manual-pdf -- \
 - 로컬에 `pdftotext`가 설치되어 있어야 합니다.
 - 원격 PDF URL을 직접 다운로드하지 않습니다. 먼저 권한 있는 방식으로 PDF 파일을 확보한 뒤 `pdfPath`로 넣습니다.
 - 제3자 출처를 `--source`로 지정하면 `manual-text`와 같은 권한 게이트를 거칩니다.
+- `sourceType = user_upload`, `rightsStatus = user_provided`이면 `sourceUrl` 없이 파일 해시로 중복을 확인할 수 있습니다.
+
+## Embedding Worker
+
+대기 작업 확인:
+
+```bash
+npm run embed:manual-chunks -- --dry-run
+```
+
+실제 임베딩:
+
+```bash
+npm run embed:manual-chunks
+```
+
+특정 범위만 처리할 수도 있습니다.
+
+```bash
+npm run embed:manual-chunks -- --revision-id={revisionId}
+npm run embed:manual-chunks -- --manual-id={manualId} --batch-size=64
+```
+
+환경 변수:
+
+- `OPENAI_API_KEY`
+- `OPENAI_EMBEDDING_MODEL` (기본값 `text-embedding-3-large`)
+- `OPENAI_EMBEDDING_DIMENSIONS` (현재 스키마는 `1024`)
 
 ## Source Rights Review
 

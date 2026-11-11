@@ -8,6 +8,11 @@ import express, {
 import { z } from "zod";
 
 import { closePool, query } from "./db";
+import {
+  createEmbeddings,
+  isEmbeddingConfigured,
+  toVectorLiteral
+} from "./embeddings";
 import { env } from "./env";
 
 type CategoryRow = {
@@ -65,7 +70,10 @@ type SourceCategoryNode = {
 type RagEvidence = {
   chunkId: string;
   manualId: string;
+  revisionId: string;
   title: string;
+  versionLabel: string | null;
+  softwareVersion: string | null;
   modelName: string | null;
   manufacturerName: string | null;
   categoryName: string;
@@ -75,6 +83,7 @@ type RagEvidence = {
   pageStart: number | null;
   pageEnd: number | null;
   content: string;
+  contentType: string;
   score: number;
 };
 
@@ -232,7 +241,16 @@ function extractSearchTerms(question: string) {
   );
 }
 
-async function retrieveRagEvidence(question: string, limit = 5) {
+type RagSearchOptions = {
+  manualId?: string;
+  revisionId?: string;
+};
+
+async function retrieveLexicalRagEvidence(
+  question: string,
+  limit = 5,
+  options: RagSearchOptions = {}
+) {
   const terms = extractSearchTerms(question);
   const searchText = terms.length > 0 ? terms.join(" ") : question;
   const exactPattern = `%${question}%`;
@@ -243,16 +261,20 @@ async function retrieveRagEvidence(question: string, limit = 5) {
         select
           manual_chunks.id as "chunkId",
           manuals.id as "manualId",
+          manual_revisions.id as "revisionId",
           manuals.title,
+          manual_revisions.version_label as "versionLabel",
+          manual_revisions.software_version as "softwareVersion",
           manuals.model_name as "modelName",
           manufacturers.name as "manufacturerName",
           categories.name as "categoryName",
           categories.slug_path as "categorySlugPath",
-          manuals.source_url as "sourceUrl",
-          manuals.pdf_url as "pdfUrl",
+          coalesce(manual_revisions.source_url, manuals.source_url) as "sourceUrl",
+          coalesce(manual_revisions.pdf_url, manuals.pdf_url) as "pdfUrl",
           manual_chunks.page_start as "pageStart",
           manual_chunks.page_end as "pageEnd",
           manual_chunks.content,
+          manual_chunks.content_type as "contentType",
           (
             case
               when manual_chunks.search_vector @@ plainto_tsquery('simple', $1) then 16
@@ -298,15 +320,21 @@ async function retrieveRagEvidence(question: string, limit = 5) {
             ), 0)
           )::int as metadata_score
         from manual_chunks
+        join manual_revisions on manual_revisions.id = manual_chunks.revision_id
         join manuals on manuals.id = manual_chunks.manual_id
         join categories on categories.id = manuals.category_id
         left join manufacturers on manufacturers.id = manuals.manufacturer_id
-        where manuals.ingestion_status = 'ready'
+        where manual_revisions.ingestion_status in ('parsed', 'ready')
+          and ($4::uuid is null or manuals.id = $4)
+          and ($5::uuid is null or manual_revisions.id = $5)
       )
       select
         "chunkId",
         "manualId",
+        "revisionId",
         title,
+        "versionLabel",
+        "softwareVersion",
         "modelName",
         "manufacturerName",
         "categoryName",
@@ -316,16 +344,183 @@ async function retrieveRagEvidence(question: string, limit = 5) {
         "pageStart",
         "pageEnd",
         content,
+        "contentType",
         (content_score + metadata_score) as score
       from ranked_chunks
       where content_score + metadata_score > 0
       order by content_score + metadata_score desc, content_score desc, title asc, "pageStart" asc nulls last
-      limit $4
+      limit $6
     `,
-    [searchText, exactPattern, terms, limit]
+    [
+      searchText,
+      exactPattern,
+      terms,
+      options.manualId ?? null,
+      options.revisionId ?? null,
+      limit
+    ]
   );
 
   return result.rows;
+}
+
+async function retrieveHybridRagEvidence(
+  question: string,
+  queryEmbedding: number[],
+  limit: number,
+  options: RagSearchOptions
+) {
+  const terms = extractSearchTerms(question);
+  const searchText = terms.length > 0 ? terms.join(" ") : question;
+  const exactPattern = `%${question}%`;
+  const result = await query<RagEvidence>(
+    `
+      with eligible as (
+        select
+          manual_chunks.id as chunk_id,
+          manuals.id as manual_id,
+          manual_revisions.id as revision_id,
+          manuals.title,
+          manual_revisions.version_label,
+          manual_revisions.software_version,
+          manuals.model_name,
+          manufacturers.name as manufacturer_name,
+          categories.name as category_name,
+          categories.slug_path as category_slug_path,
+          coalesce(manual_revisions.source_url, manuals.source_url) as source_url,
+          coalesce(manual_revisions.pdf_url, manuals.pdf_url) as pdf_url,
+          manual_chunks.page_start,
+          manual_chunks.page_end,
+          manual_chunks.content,
+          manual_chunks.content_type,
+          manual_chunks.search_vector,
+          manual_chunks.embedding,
+          (
+            case
+              when manual_chunks.search_vector @@ plainto_tsquery('simple', $1) then 16
+              else 0
+            end +
+            case when manual_chunks.content ilike $2 then 12 else 0 end +
+            coalesce((
+              select sum(
+                case
+                  when manual_chunks.content ilike '%' || term || '%'
+                    and term ~ '[0-9]'
+                    and term ~ '[[:alpha:]]'
+                    and length(term) <= 8 then 30
+                  when manual_chunks.content ilike '%' || term || '%'
+                    and term ~ '^[0-9]+$' then 4
+                  when manual_chunks.content ilike '%' || term || '%'
+                    and length(term) >= 3 then 12
+                  when manual_chunks.content ilike '%' || term || '%' then 3
+                  else 0
+                end
+              )
+              from unnest($3::text[]) as term
+            ), 0) +
+            case when manuals.title ilike $2 then 10 else 0 end +
+            case when coalesce(manuals.model_name, '') ilike $2 then 10 else 0 end +
+            case when coalesce(manufacturers.name, '') ilike $2 then 8 else 0 end
+          )::int as lexical_score
+        from manual_chunks
+        join manual_revisions on manual_revisions.id = manual_chunks.revision_id
+        join manuals on manuals.id = manual_chunks.manual_id
+        join categories on categories.id = manuals.category_id
+        left join manufacturers on manufacturers.id = manuals.manufacturer_id
+        where manual_revisions.ingestion_status in ('parsed', 'ready')
+          and ($5::uuid is null or manuals.id = $5)
+          and ($6::uuid is null or manual_revisions.id = $6)
+      ),
+      lexical as (
+        select
+          chunk_id,
+          row_number() over (
+            order by lexical_score desc, page_start asc nulls last
+          ) as lexical_rank
+        from eligible
+        where lexical_score > 0
+        order by lexical_score desc, page_start asc nulls last
+        limit 30
+      ),
+      semantic as (
+        select
+          chunk_id,
+          row_number() over (
+            order by embedding <=> $4::vector(1024)
+          ) as semantic_rank
+        from eligible
+        where embedding is not null
+        order by embedding <=> $4::vector(1024)
+        limit 30
+      ),
+      fused as (
+        select
+          coalesce(lexical.chunk_id, semantic.chunk_id) as chunk_id,
+          coalesce(1.0 / (60 + lexical.lexical_rank), 0) +
+          coalesce(1.0 / (60 + semantic.semantic_rank), 0) as score
+        from lexical
+        full join semantic on semantic.chunk_id = lexical.chunk_id
+      )
+      select
+        eligible.chunk_id as "chunkId",
+        eligible.manual_id as "manualId",
+        eligible.revision_id as "revisionId",
+        eligible.title,
+        eligible.version_label as "versionLabel",
+        eligible.software_version as "softwareVersion",
+        eligible.model_name as "modelName",
+        eligible.manufacturer_name as "manufacturerName",
+        eligible.category_name as "categoryName",
+        eligible.category_slug_path as "categorySlugPath",
+        eligible.source_url as "sourceUrl",
+        eligible.pdf_url as "pdfUrl",
+        eligible.page_start as "pageStart",
+        eligible.page_end as "pageEnd",
+        eligible.content,
+        eligible.content_type as "contentType",
+        fused.score
+      from fused
+      join eligible on eligible.chunk_id = fused.chunk_id
+      order by fused.score desc, eligible.page_start asc nulls last
+      limit $7
+    `,
+    [
+      searchText,
+      exactPattern,
+      terms,
+      toVectorLiteral(queryEmbedding),
+      options.manualId ?? null,
+      options.revisionId ?? null,
+      limit
+    ]
+  );
+
+  return result.rows;
+}
+
+async function retrieveRagEvidence(
+  question: string,
+  limit = 5,
+  options: RagSearchOptions = {}
+) {
+  if (isEmbeddingConfigured()) {
+    try {
+      const [queryEmbedding] = await createEmbeddings([question]);
+      return await retrieveHybridRagEvidence(
+        question,
+        queryEmbedding,
+        limit,
+        options
+      );
+    } catch (error) {
+      console.warn(
+        "Hybrid retrieval failed; falling back to lexical retrieval.",
+        error instanceof Error ? error.message : error
+      );
+    }
+  }
+
+  return retrieveLexicalRagEvidence(question, limit, options);
 }
 
 function buildRagAnswer(question: string, evidence: RagEvidence[]) {
@@ -356,7 +551,10 @@ function buildRagAnswer(question: string, evidence: RagEvidence[]) {
   const citations = evidence.map((item) => ({
     chunkId: item.chunkId,
     manualId: item.manualId,
+    revisionId: item.revisionId,
     title: item.title,
+    versionLabel: item.versionLabel,
+    softwareVersion: item.softwareVersion,
     manufacturerName: item.manufacturerName,
     modelName: item.modelName,
     categoryName: item.categoryName,
@@ -365,6 +563,7 @@ function buildRagAnswer(question: string, evidence: RagEvidence[]) {
     pageEnd: item.pageEnd,
     sourceUrl: item.sourceUrl,
     pdfUrl: item.pdfUrl,
+    contentType: item.contentType,
     score: item.score,
     excerpt: item.content
   }));
@@ -1029,10 +1228,48 @@ app.get(
 
     const pagesResult = await query(
       `
-        select page_number as "pageNumber", text_content as "textContent"
+        select
+          manual_pages.revision_id as "revisionId",
+          manual_pages.page_number as "pageNumber",
+          manual_pages.printed_page_label as "printedPageLabel",
+          manual_pages.text_content as "textContent",
+          manual_pages.is_embeddable as "isEmbeddable",
+          manual_pages.layout_metadata as "layoutMetadata"
         from manual_pages
+        join manual_revisions
+          on manual_revisions.id = manual_pages.revision_id
+        where manual_pages.manual_id = $1
+        order by manual_revisions.created_at desc, manual_pages.page_number asc
+      `,
+      [request.params.id]
+    );
+
+    const revisionsResult = await query(
+      `
+        select
+          id,
+          revision_key as "revisionKey",
+          version_label as "versionLabel",
+          software_version as "softwareVersion",
+          language_code as "languageCode",
+          source_url as "sourceUrl",
+          pdf_url as "pdfUrl",
+          storage_path as "storagePath",
+          source_type as "sourceType",
+          rights_status as "rightsStatus",
+          file_sha256 as "fileSha256",
+          file_size_bytes as "fileSizeBytes",
+          page_count as "pageCount",
+          parser_version as "parserVersion",
+          chunker_version as "chunkerVersion",
+          ingestion_status as "ingestionStatus",
+          embedding_status as "embeddingStatus",
+          metadata,
+          created_at as "createdAt",
+          updated_at as "updatedAt"
+        from manual_revisions
         where manual_id = $1
-        order by page_number asc
+        order by created_at desc
       `,
       [request.params.id]
     );
@@ -1041,11 +1278,16 @@ app.get(
       `
         select
           id,
+          revision_id as "revisionId",
+          section_id as "sectionId",
           page_start as "pageStart",
           page_end as "pageEnd",
           chunk_index as "chunkIndex",
           content,
+          content_type as "contentType",
           token_count as "tokenCount",
+          embedding_model as "embeddingModel",
+          embedding_dimensions as "embeddingDimensions",
           metadata
         from manual_chunks
         where manual_id = $1
@@ -1058,6 +1300,7 @@ app.get(
     response.json({
       data: {
         ...manualResult.rows[0],
+        revisions: revisionsResult.rows,
         pages: pagesResult.rows,
         chunks: chunksResult.rows
       }
@@ -1197,14 +1440,19 @@ app.post(
 
 const ragSearchSchema = z.object({
   question: z.string().min(1).max(12000),
-  limit: z.number().int().min(1).max(10).optional()
+  limit: z.number().int().min(1).max(10).optional(),
+  manualId: z.string().uuid().optional(),
+  revisionId: z.string().uuid().optional()
 });
 
 app.post(
   "/api/rag/search",
   asyncHandler(async (request, response) => {
     const body = ragSearchSchema.parse(request.body);
-    const evidence = await retrieveRagEvidence(body.question, body.limit ?? 5);
+    const evidence = await retrieveRagEvidence(body.question, body.limit ?? 5, {
+      manualId: body.manualId,
+      revisionId: body.revisionId
+    });
 
     response.json({
       data: {
@@ -1218,7 +1466,9 @@ app.post(
 const askSchema = z.object({
   sessionId: z.string().uuid().optional(),
   question: z.string().min(1).max(12000),
-  clientId: z.string().max(120).optional()
+  clientId: z.string().max(120).optional(),
+  manualId: z.string().uuid().optional(),
+  revisionId: z.string().uuid().optional()
 });
 
 app.post(
@@ -1226,7 +1476,10 @@ app.post(
   asyncHandler(async (request, response) => {
     const body = askSchema.parse(request.body);
     const sessionId = body.sessionId ?? (await createChatSession(body.clientId));
-    const evidence = await retrieveRagEvidence(body.question);
+    const evidence = await retrieveRagEvidence(body.question, 5, {
+      manualId: body.manualId,
+      revisionId: body.revisionId
+    });
     const ragResponse = buildRagAnswer(body.question, evidence);
 
     const userMessage = await insertChatMessage(sessionId, "user", body.question, []);

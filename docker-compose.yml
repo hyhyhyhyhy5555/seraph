@@ -14,11 +14,14 @@ services:
       DATABASE_URL: postgres://seraph:seraph@postgres:5432/seraph
       CORS_ORIGINS: http://localhost:8081,http://localhost:19006
       TRUST_PROXY: "false"
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_EMBEDDING_MODEL: ${OPENAI_EMBEDDING_MODEL:-text-embedding-3-large}
+      OPENAI_EMBEDDING_DIMENSIONS: ${OPENAI_EMBEDDING_DIMENSIONS:-1024}
     ports:
       - "4000:4000"
 
   postgres:
-    image: postgres:17
+    image: pgvector/pgvector:pg17
     container_name: seraph-postgres
     restart: unless-stopped
     environment:

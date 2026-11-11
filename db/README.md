@@ -5,8 +5,11 @@
 - `categories`: 최대 3단계 카테고리 트리입니다. 예: `가전 > 세탁기`.
 - `manufacturers`: 제조사 정보입니다. 제조사는 카테고리가 아니라 독립 테이블로 둡니다.
 - `manuals`: 설명서 메타데이터입니다. 제목, 모델명, 제조사, 원문 링크, PDF 링크, 권리 상태를 저장합니다.
+- `manual_revisions`: 언어, 소프트웨어 버전, 파일 해시, 파싱/임베딩 상태를 가진 설명서 판본입니다.
+- `manual_applicability`: 판본이 적용되는 제품·모델·소프트웨어 버전입니다.
 - `manual_pages`: PDF에서 추출한 페이지별 텍스트입니다.
-- `manual_chunks`: RAG 검색용 청크입니다. `embedding double precision[]`을 저장합니다.
+- `manual_sections`: 목차에서 복원한 장·절 계층입니다.
+- `manual_chunks`: RAG 검색용 의미 청크입니다. `embedding vector(1024)`를 저장합니다.
 - `chat_sessions`, `chat_messages`: 설명서 채팅 기록입니다.
 - `contact_requests`: 문의하기 요청입니다.
 - `manual_requests`: 사용자가 찾지 못한 설명서 요청입니다.
@@ -23,13 +26,14 @@
 
 ## RAG Flow
 
-1. PDF 또는 텍스트를 `manuals`에 등록합니다.
-2. 페이지별 원문을 `manual_pages`에 저장합니다.
-3. 검색 가능한 단위로 쪼갠 텍스트를 `manual_chunks.content`에 저장합니다.
-4. 임베딩을 생성해 `manual_chunks.embedding`에 배열로 저장합니다.
-5. `match_manual_chunks(query_embedding, match_count, manual_filter)` 함수로 유사 청크를 찾습니다.
+1. 제품 수준 설명서를 `manuals`에 등록합니다.
+2. PDF 판본을 `manual_revisions`에 등록하고 파일 해시로 중복을 확인합니다.
+3. 페이지 원문과 목차 구조를 `manual_pages`, `manual_sections`에 저장합니다.
+4. 의미 단위 본문과 문맥이 붙은 임베딩 입력을 `manual_chunks`에 저장합니다.
+5. embedding worker가 1024차원 벡터를 생성합니다.
+6. HNSW cosine 검색과 키워드 검색을 결합해 근거 청크를 찾습니다.
 
-현재 로컬 구성은 표준 PostgreSQL만으로 바로 실행되도록 배열 기반 cosine similarity를 사용합니다. 운영 단계에서 대량 벡터 검색 성능이 필요해지면 `pgvector` 컬럼과 HNSW 인덱스로 별도 마이그레이션을 추가하면 됩니다.
+기존 배열 임베딩은 `embedding_legacy`로 보존하며, 신규 검색은 pgvector와 HNSW 인덱스를 사용합니다.
 
 ## External Source Policy
 
@@ -60,7 +64,7 @@ Manuall 같은 제3자 사이트는 기본적으로 `metadata_only`로 취급합
 3. 출처별 권한 문서 또는 제휴 상태를 `source_sites`에 기록합니다.
 4. 권한이 확인된 텍스트 export는 `import:manual-text`로 본문을 적재합니다.
 5. 권한이 확인된 로컬 PDF 파일은 `import:manual-pdf`로 텍스트 추출 후 본문을 적재합니다.
-6. 본문이 적재된 설명서는 `manuals.ingestion_status = ready`가 되고 RAG 검색 대상에 포함됩니다.
+6. 본문 적재 후에는 `parsed`, 임베딩까지 끝나면 `ready`가 됩니다. 임베딩 전에도 키워드 검색은 가능하지만 벡터 검색에는 포함되지 않습니다.
 
 권한 상태 변경은 직접 SQL로 덮어쓰기보다 `PATCH /api/source-sites/:id/rights`를 사용합니다. 그래야 `source_rights_events`에 변경 근거가 남습니다.
 
