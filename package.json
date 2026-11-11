@@ -28,7 +28,8 @@
     "import:manual-candidates": "tsx backend/src/importers/manualCandidates.ts",
     "import:manual-candidates:promote": "tsx backend/src/importers/promoteManualCandidates.ts",
     "import:manual-text": "tsx backend/src/importers/manualText.ts",
-    "import:manual-pdf": "tsx backend/src/importers/manualPdf.ts"
+    "import:manual-pdf": "tsx backend/src/importers/manualPdf.ts",
+    "embed:manual-chunks": "tsx backend/src/importers/embedManualChunks.ts"
   },
   "engines": {
     "node": ">=22.13.0 <25",
@@ -42,6 +43,8 @@
     "expo": "57.0.1",
     "expo-router": "57.0.2",
     "express": "^5.2.1",
+    "js-tiktoken": "^1.0.21",
+    "openai": "^6.48.0",
     "pg": "^8.22.0",
     "react": "19.2.7",
     "react-dom": "19.2.7",

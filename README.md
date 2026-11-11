@@ -12,9 +12,9 @@ npm run start
 ## 현재 포함 범위
 
 - 검색 탭: 대분류, 소분류, 세부분류/제조사 탐색 및 샘플 설명서 검색
-- 채팅 탭: RAG 연결 전 기본 채팅 UI
+- 채팅 탭: 설명서 근거와 페이지를 반환하는 RAG 채팅 UI
 - 메뉴 탭: 설정, 문의하기, 약관 항목
-- 백엔드: Express API 서버, PostgreSQL 스키마, 샘플 시드, 더미 RAG 검색
+- 백엔드: Express API 서버, PostgreSQL/pgvector 스키마, 구조형 PDF 수집, 하이브리드 RAG 검색
 
 ## 백엔드 실행
 
@@ -25,7 +25,7 @@ npm run backend:dev
 
 PostgreSQL 기본 접속 정보는 database/user/password 모두 `seraph`입니다.
 
-더미 RAG 질문 테스트:
+RAG 질문 테스트:
 
 ```bash
 curl -sS -X POST http://localhost:4000/api/chat/ask \
@@ -58,6 +58,15 @@ Manuall 전체 PDF/텍스트를 우리 DB에 바로 복제하지 않습니다. �
 권한을 받은 텍스트 export나 사용자 제공 텍스트는 `npm run import:manual-text`로 `manuals`, `manual_pages`, `manual_chunks`에 적재할 수 있습니다.
 권한 있게 확보한 로컬 PDF 파일은 `npm run import:manual-pdf`로 텍스트를 추출해 같은 RAG 테이블에 적재할 수 있습니다.
 제3자 출처의 권한 상태 변경은 `PATCH /api/source-sites/:id/rights`로 처리하고, 변경 이력은 `source_rights_events`에 남깁니다.
+
+PDF importer는 목차에서 장/절 구조를 복원하고, 경고·참고·절차·문제해결 단위로 청크를 생성합니다. 설명서 본문 적재 후 임베딩을 생성하려면 `.env`에 `OPENAI_API_KEY`를 설정하고 다음을 실행합니다.
+
+```bash
+npm run embed:manual-chunks -- --dry-run
+npm run embed:manual-chunks
+```
+
+기본 임베딩 설정은 `text-embedding-3-large`, 1024차원입니다. 키가 없거나 임베딩 호출에 실패하면 API 검색은 PostgreSQL 키워드 검색으로 안전하게 폴백합니다.
 
 ## CI 및 배포 준비
 

@@ -55,5 +55,12 @@ export const env = {
   pgUser: process.env.PGUSER ?? "seraph",
   pgPassword: process.env.PGPASSWORD ?? "seraph",
   corsOrigins,
-  trustProxy: toBoolean(process.env.TRUST_PROXY)
+  trustProxy: toBoolean(process.env.TRUST_PROXY),
+  openaiApiKey: process.env.OPENAI_API_KEY?.trim() || undefined,
+  openaiEmbeddingModel:
+    process.env.OPENAI_EMBEDDING_MODEL?.trim() || "text-embedding-3-large",
+  openaiEmbeddingDimensions: toNumber(
+    process.env.OPENAI_EMBEDDING_DIMENSIONS,
+    1024
+  )
 };
