@@ -47,7 +47,7 @@
     "openai": "^6.48.0",
     "pg": "^8.22.0",
     "react": "19.2.8",
-    "react-dom": "19.2.7",
+    "react-dom": "19.2.8",
     "react-native": "0.86.0",
     "react-native-gesture-handler": "3.1.0",
     "react-native-reanimated": "4.5.0",
