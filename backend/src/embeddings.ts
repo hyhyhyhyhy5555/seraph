@@ -1,39 +1,46 @@
-import OpenAI from "openai";
-
 import { env } from "./env";
 
-let client: OpenAI | null = null;
+async function createClient() {
+  const { GoogleGenAI } = await import("@google/genai");
+  return new GoogleGenAI({ apiKey: env.geminiApiKey });
+}
 
-function getClient() {
-  if (!env.openaiApiKey) {
+let clientPromise: ReturnType<typeof createClient> | null = null;
+
+async function getClient() {
+  if (!env.geminiApiKey) {
     throw new Error(
-      "OPENAI_API_KEY is required to create embeddings. Use --dry-run to inspect pending work."
+      "GEMINI_API_KEY is required to create embeddings. Use --dry-run to inspect pending work."
     );
   }
 
-  client ??= new OpenAI({ apiKey: env.openaiApiKey });
-  return client;
+  clientPromise ??= createClient();
+  return clientPromise;
 }
 
 export function isEmbeddingConfigured() {
-  return Boolean(env.openaiApiKey);
+  return Boolean(env.geminiApiKey);
 }
 
-export async function createEmbeddings(input: string[]) {
+export async function createEmbeddings(
+  input: string[],
+  taskType: "RETRIEVAL_DOCUMENT" | "RETRIEVAL_QUERY" = "RETRIEVAL_DOCUMENT"
+) {
   if (input.length === 0) {
     return [];
   }
 
-  const response = await getClient().embeddings.create({
-    model: env.openaiEmbeddingModel,
-    input,
-    dimensions: env.openaiEmbeddingDimensions,
-    encoding_format: "float"
+  const client = await getClient();
+  const response = await client.models.embedContent({
+    model: env.geminiEmbeddingModel,
+    contents: input,
+    config: {
+      taskType,
+      outputDimensionality: env.geminiEmbeddingDimensions
+    }
   });
 
-  return response.data
-    .sort((left, right) => left.index - right.index)
-    .map((item) => item.embedding);
+  return (response.embeddings ?? []).map((item) => item.values ?? []);
 }
 
 export function toVectorLiteral(embedding: number[]) {

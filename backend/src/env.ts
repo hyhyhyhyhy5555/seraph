@@ -56,11 +56,15 @@ export const env = {
   pgPassword: process.env.PGPASSWORD ?? "seraph",
   corsOrigins,
   trustProxy: toBoolean(process.env.TRUST_PROXY),
-  openaiApiKey: process.env.OPENAI_API_KEY?.trim() || undefined,
-  openaiEmbeddingModel:
-    process.env.OPENAI_EMBEDDING_MODEL?.trim() || "text-embedding-3-large",
-  openaiEmbeddingDimensions: toNumber(
-    process.env.OPENAI_EMBEDDING_DIMENSIONS,
+  geminiApiKey: process.env.GEMINI_API_KEY?.trim() || undefined,
+  geminiEmbeddingModel:
+    process.env.GEMINI_EMBEDDING_MODEL?.trim() || "gemini-embedding-001",
+  geminiEmbeddingDimensions: toNumber(
+    process.env.GEMINI_EMBEDDING_DIMENSIONS,
     1024
-  )
+  ),
+  geminiGenerationModel:
+    process.env.GEMINI_GENERATION_MODEL?.trim() || "gemini-3.8-flash",
+  geminiRequestTimeoutMs: toNumber(process.env.GEMINI_REQUEST_TIMEOUT_MS, 30_000),
+  geminiMaxOutputTokens: toNumber(process.env.GEMINI_MAX_OUTPUT_TOKENS, 1200)
 };

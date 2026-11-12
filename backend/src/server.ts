@@ -14,6 +14,7 @@ import {
   toVectorLiteral
 } from "./embeddings";
 import { env } from "./env";
+import { generateGroundedAnswer, isGenerationConfigured } from "./gemini";
 
 type CategoryRow = {
   id: string;
@@ -505,7 +506,10 @@ async function retrieveRagEvidence(
 ) {
   if (isEmbeddingConfigured()) {
     try {
-      const [queryEmbedding] = await createEmbeddings([question]);
+      const [queryEmbedding] = await createEmbeddings(
+        [question],
+        "RETRIEVAL_QUERY"
+      );
       return await retrieveHybridRagEvidence(
         question,
         queryEmbedding,
@@ -523,7 +527,7 @@ async function retrieveRagEvidence(
   return retrieveLexicalRagEvidence(question, limit, options);
 }
 
-function buildRagAnswer(question: string, evidence: RagEvidence[]) {
+async function buildRagAnswer(question: string, evidence: RagEvidence[]) {
   if (evidence.length === 0) {
     return {
       answer:
@@ -540,13 +544,44 @@ function buildRagAnswer(question: string, evidence: RagEvidence[]) {
         : `${primary.pageStart}-${primary.pageEnd}페이지`
       : "페이지 정보 없음";
 
-  const answer = [
+  let answer = [
     `${primary.title} 기준으로 보면, 관련 내용은 다음과 같습니다.`,
     "",
     primary.content,
     "",
     `출처: ${primary.manufacturerName ?? "제조사 미상"} · ${primary.categoryName} · ${pageText}`
   ].join("\n");
+
+  if (isGenerationConfigured()) {
+    const context = evidence
+      .map((item, index) => {
+        const pages =
+          item.pageStart && item.pageEnd
+            ? item.pageStart === item.pageEnd
+              ? `${item.pageStart}`
+              : `${item.pageStart}-${item.pageEnd}`
+            : "알 수 없음";
+        return [
+          `[${index + 1}] ${item.title}`,
+          `제조사: ${item.manufacturerName ?? "알 수 없음"}`,
+          `모델: ${item.modelName ?? "알 수 없음"}`,
+          `페이지: ${pages}`,
+          item.content
+        ].join("\n");
+      })
+      .join("\n\n");
+
+    try {
+      answer = await generateGroundedAnswer(
+        `질문:\n${question}\n\n설명서 근거:\n${context}`
+      );
+    } catch (error) {
+      console.warn(
+        "Gemini answer generation failed; using retrieval-only fallback.",
+        error instanceof Error ? error.message : error
+      );
+    }
+  }
 
   const citations = evidence.map((item) => ({
     chunkId: item.chunkId,
@@ -1480,7 +1515,7 @@ app.post(
       manualId: body.manualId,
       revisionId: body.revisionId
     });
-    const ragResponse = buildRagAnswer(body.question, evidence);
+    const ragResponse = await buildRagAnswer(body.question, evidence);
 
     const userMessage = await insertChatMessage(sessionId, "user", body.question, []);
     const assistantMessage = await insertChatMessage(

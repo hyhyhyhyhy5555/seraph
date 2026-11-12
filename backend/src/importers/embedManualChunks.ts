@@ -63,8 +63,8 @@ async function createImportJob(dryRun: boolean, args: ReturnType<typeof parseArg
         dryRun,
         manualId: args.manualId,
         revisionId: args.revisionId,
-        model: env.openaiEmbeddingModel,
-        dimensions: env.openaiEmbeddingDimensions
+        model: env.geminiEmbeddingModel,
+        dimensions: env.geminiEmbeddingDimensions
       })
     ]
   );
@@ -97,8 +97,8 @@ async function finishImportJob(
 
 async function loadPendingChunks(args: ReturnType<typeof parseArgs>) {
   const params: unknown[] = [
-    env.openaiEmbeddingModel,
-    env.openaiEmbeddingDimensions
+    env.geminiEmbeddingModel,
+    env.geminiEmbeddingDimensions
   ];
   const filters = [
     "manual_revisions.ingestion_status in ('parsed', 'embedding', 'ready')"
@@ -234,9 +234,9 @@ async function updateRevisionCompletion(revisionIds: string[]) {
 async function main() {
   const args = parseArgs();
 
-  if (env.openaiEmbeddingDimensions !== 1024) {
+  if (env.geminiEmbeddingDimensions !== 1024) {
     throw new Error(
-      "OPENAI_EMBEDDING_DIMENSIONS must be 1024 for the current vector(1024) schema."
+      "GEMINI_EMBEDDING_DIMENSIONS must be 1024 for the current vector(1024) schema."
     );
   }
 
@@ -255,8 +255,8 @@ async function main() {
           configured: isEmbeddingConfigured(),
           pendingChunkCount: chunks.length,
           revisionCount: revisionIds.length,
-          model: env.openaiEmbeddingModel,
-          dimensions: env.openaiEmbeddingDimensions,
+          model: env.geminiEmbeddingModel,
+          dimensions: env.geminiEmbeddingDimensions,
           dryRun: true
         },
         null,
@@ -272,10 +272,10 @@ async function main() {
       "failed",
       0,
       chunks.length,
-      "OPENAI_API_KEY is required."
+      "GEMINI_API_KEY is required."
     );
     throw new Error(
-      "OPENAI_API_KEY is required. Run with --dry-run to inspect pending chunks."
+      "GEMINI_API_KEY is required. Run with --dry-run to inspect pending chunks."
     );
   }
 
@@ -310,8 +310,8 @@ async function main() {
           [
             chunk.id,
             toVectorLiteral(embeddings[batchIndex]),
-            env.openaiEmbeddingModel,
-            env.openaiEmbeddingDimensions,
+            env.geminiEmbeddingModel,
+            env.geminiEmbeddingDimensions,
             chunk.contentHash
           ]
         );
@@ -333,8 +333,8 @@ async function main() {
           jobId,
           embeddedChunkCount: embeddedCount,
           revisionCount: revisionIds.length,
-          model: env.openaiEmbeddingModel,
-          dimensions: env.openaiEmbeddingDimensions,
+          model: env.geminiEmbeddingModel,
+          dimensions: env.geminiEmbeddingDimensions,
           dryRun: false
         },
         null,

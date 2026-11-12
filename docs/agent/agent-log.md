@@ -61,3 +61,15 @@
 
 - 실제 PDF 데이터 확보·파싱·임베딩·검색 평가를 현재 최우선 흐름으로 재정리하고 `DATA-01`을 완료, `DATA-04`를 진행 중으로 반영했습니다.
 - importer 드라이런과 실제 적재, 원본/DB 페이지 수 일치, 파일 해시 일치, Git diff 형식 검사를 통과했습니다.
+
+## 2026-11-12 09:38:55 KST
+
+### Gemini RAG
+
+- OpenAI 전용 임베딩 경로를 Gemini 1024차원 query/document 임베딩으로 교체하고, 검색 근거만 사용하는 Gemini 답변 생성과 실패 시 원문 폴백을 추가했습니다.
+- 실제 키는 Git에서 제외된 로컬 환경에만 유지하고 Docker·환경 예제·문서·TODO에는 변수명과 안전한 기본값만 반영했습니다.
+
+### Expo SDK 58
+
+- Expo SDK 58, React Native 0.88과 권장 네이티브 의존성으로 정렬하고 SDK 58의 StatusBar 및 strict ref 타입 변경을 반영했습니다.
+- Expo Doctor 20/20, 앱·백엔드 TypeScript 검사, 웹 정적 export와 백엔드 빌드를 통과했습니다.

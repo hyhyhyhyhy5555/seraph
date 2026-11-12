@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { ActivityIndicator, Linking, ScrollView, StyleSheet, View } from "react-native";
+import type { ScrollViewInstance } from "react-native";
 
 import { Button, Card, Icon, Text } from "@/components/ui";
 import type { RagCitation } from "@/lib/api";
@@ -14,7 +15,7 @@ type ChatMessageListProps = {
 };
 
 export function ChatMessageList({ isSending, messages }: ChatMessageListProps) {
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ScrollViewInstance>(null);
 
   return (
     <ScrollView

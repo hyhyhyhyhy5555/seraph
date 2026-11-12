@@ -59,7 +59,7 @@ Manuall 전체 PDF/텍스트를 우리 DB에 바로 복제하지 않습니다. �
 권한 있게 확보한 로컬 PDF 파일은 `npm run import:manual-pdf`로 텍스트를 추출해 같은 RAG 테이블에 적재할 수 있습니다.
 제3자 출처의 권한 상태 변경은 `PATCH /api/source-sites/:id/rights`로 처리하고, 변경 이력은 `source_rights_events`에 남깁니다.
 
-PDF importer는 목차에서 장/절 구조를 복원하고, 경고·참고·절차·문제해결 단위로 청크를 생성합니다. 설명서 본문 적재 후 임베딩을 생성하려면 `.env`에 `OPENAI_API_KEY`를 설정하고 다음을 실행합니다.
+PDF importer는 목차에서 장/절 구조를 복원하고, 경고·참고·절차·문제해결 단위로 청크를 생성합니다. 설명서 본문 적재 후 임베딩과 근거 기반 답변을 사용하려면 `.env`에 `GEMINI_API_KEY`를 설정하고 다음을 실행합니다.
 
 ```bash
 npm run embed:manual-chunks -- --dry-run

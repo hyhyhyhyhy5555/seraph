@@ -57,9 +57,9 @@ npm run backend:dev
 
 ## Current RAG Behavior
 
-현재 `/api/chat/ask`는 LLM 없이 근거 청크를 반환하는 RAG입니다.
+현재 `/api/chat/ask`는 검색된 설명서 청크만 컨텍스트로 Gemini 답변을 생성하며, 키가 없거나 생성 호출이 실패하면 검색 근거 원문 응답으로 폴백합니다.
 
-1. `OPENAI_API_KEY`가 있으면 질문을 같은 모델/차원으로 임베딩합니다.
+1. `GEMINI_API_KEY`가 있으면 질문을 같은 Gemini 모델/차원으로 임베딩합니다.
 2. pgvector cosine 검색과 키워드 검색을 각각 수행합니다.
 3. Reciprocal Rank Fusion으로 두 결과를 결합합니다.
 4. `manualId` 또는 `revisionId`가 전달되면 해당 설명서 버전으로 제한합니다.
@@ -215,9 +215,12 @@ npm run embed:manual-chunks -- --manual-id={manualId} --batch-size=64
 
 환경 변수:
 
-- `OPENAI_API_KEY`
-- `OPENAI_EMBEDDING_MODEL` (기본값 `text-embedding-3-large`)
-- `OPENAI_EMBEDDING_DIMENSIONS` (현재 스키마는 `1024`)
+- `GEMINI_API_KEY`
+- `GEMINI_EMBEDDING_MODEL` (기본값 `gemini-embedding-001`)
+- `GEMINI_EMBEDDING_DIMENSIONS` (현재 스키마는 `1024`)
+- `GEMINI_GENERATION_MODEL` (기본값 `gemini-3.8-flash`)
+- `GEMINI_REQUEST_TIMEOUT_MS` (기본값 `30000`)
+- `GEMINI_MAX_OUTPUT_TOKENS` (기본값 `1200`)
 
 ## Source Rights Review
 
