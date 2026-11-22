@@ -33,18 +33,19 @@ export function EmptyState({ description, icon = "file-tray-outline", title }: E
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    backgroundColor: colors.surfaceSubtle,
+    backgroundColor: colors.surface,
     borderColor: colors.border,
     borderRadius: radii.md,
-    borderStyle: "dashed",
     borderWidth: 1,
     gap: spacing.sm,
     padding: spacing.xl
   },
   iconFrame: {
     alignItems: "center",
-    backgroundColor: colors.signal,
+    backgroundColor: colors.surfaceRaised,
+    borderColor: colors.border,
     borderRadius: radii.pill,
+    borderWidth: 1,
     height: 48,
     justifyContent: "center",
     width: 48

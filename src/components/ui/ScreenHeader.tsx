@@ -48,12 +48,16 @@ export function ScreenHeader({ action, description, eyebrow, icon, title }: Scre
 
 const styles = StyleSheet.create({
   container: {
-    gap: spacing.xl,
-    marginBottom: spacing.xxl
+    borderBottomColor: colors.border,
+    borderBottomWidth: 1,
+    gap: spacing.lg,
+    marginBottom: spacing.xl,
+    paddingBottom: spacing.lg
   },
   containerNarrow: {
     gap: spacing.md,
-    marginBottom: spacing.lg
+    marginBottom: spacing.lg,
+    paddingBottom: spacing.md
   },
   topRow: {
     alignItems: "center",
@@ -69,15 +73,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.primary,
     borderRadius: radii.sm,
-    height: 28,
+    height: 26,
     justifyContent: "center",
-    width: 28
+    width: 26
   },
   brandDot: {
-    backgroundColor: colors.signal,
+    backgroundColor: colors.onPrimary,
     borderRadius: radii.pill,
-    height: 9,
-    width: 9
+    height: 8,
+    width: 8
   },
   heroRow: {
     alignItems: "flex-end",
@@ -90,15 +94,17 @@ const styles = StyleSheet.create({
   },
   iconFrame: {
     alignItems: "center",
-    backgroundColor: colors.signal,
-    borderRadius: radii.xl,
-    height: 64,
+    backgroundColor: colors.surfaceSubtle,
+    borderColor: colors.border,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    height: 52,
     justifyContent: "center",
-    width: 64
+    width: 52
   },
   iconFrameNarrow: {
-    height: 48,
-    width: 48
+    height: 44,
+    width: 44
   },
   copy: {
     flex: 1,
@@ -106,7 +112,7 @@ const styles = StyleSheet.create({
     maxWidth: 700
   },
   eyebrow: {
-    letterSpacing: 1.6
+    letterSpacing: 1.2
   },
   description: {
     maxWidth: 620

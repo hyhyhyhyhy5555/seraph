@@ -26,9 +26,11 @@ export function Text({
   const variantStyle = typography[variant];
   const fontFamily = variantStyle.fontWeight === "400"
     ? "Pretendard"
-    : variantStyle.fontWeight === "600"
-      ? "PretendardSemiBold"
-      : "PretendardBold";
+    : variantStyle.fontWeight === "500"
+      ? "PretendardMedium"
+      : variantStyle.fontWeight === "600"
+        ? "PretendardSemiBold"
+        : "PretendardBold";
 
   return (
     <NativeText

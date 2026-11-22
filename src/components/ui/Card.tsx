@@ -32,17 +32,19 @@ const styles = StyleSheet.create({
     borderRadius: radii.md
   },
   outlined: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surfaceRaised,
     borderColor: colors.border,
     borderWidth: 1
   },
   elevated: {
-    backgroundColor: colors.surfaceRaised,
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderWidth: 1,
     ...shadows.card
   },
   tinted: {
-    backgroundColor: colors.surfaceAccent,
-    borderColor: colors.surfaceAccentStrong,
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
     borderWidth: 1
   },
   padding_sm: {

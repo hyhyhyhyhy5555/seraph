@@ -96,8 +96,8 @@ export default function SearchScreen() {
       <View style={styles.searchPanel}>
         <View style={styles.searchIntro}>
           <View style={styles.liveDot} />
-          <Text variant="label" color="onPrimary">문서 검색</Text>
-          <Text color="textTertiary" style={styles.searchHint}>제품 뒷면의 모델명을 입력하면 가장 정확합니다.</Text>
+          <Text variant="label" color="text">문서 검색</Text>
+          <Text variant="caption" color="textSecondary" style={styles.searchHint}>제품 뒷면의 모델명을 입력하면 가장 정확합니다.</Text>
         </View>
         <TextField
           accessibilityLabel="설명서 검색"
@@ -192,19 +192,21 @@ export default function SearchScreen() {
 function Metric({ icon, label, value }: { icon: IconName; label: string; value: string }) {
   return (
     <View style={styles.metric}>
-      <Icon name={icon} size="sm" color="textTertiary" />
-      <Text variant="heading" color="onPrimary">{value}</Text>
-      <Text variant="caption" color="textTertiary">{label}</Text>
+      <Icon name={icon} size="sm" color="textSecondary" />
+      <Text variant="heading" color="text">{value}</Text>
+      <Text variant="caption" color="textSecondary">{label}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   searchPanel: {
-    backgroundColor: colors.primary,
-    borderRadius: 18,
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: 16,
+    borderWidth: 1,
     gap: spacing.md,
-    padding: spacing.xl
+    padding: spacing.lg
   },
   searchIntro: {
     alignItems: "center",
@@ -213,10 +215,10 @@ const styles = StyleSheet.create({
     gap: spacing.xs
   },
   liveDot: {
-    backgroundColor: colors.signal,
+    backgroundColor: colors.primary,
     borderRadius: 999,
-    height: 8,
-    width: 8
+    height: 7,
+    width: 7
   },
   searchHint: {
     flexBasis: 240,
@@ -224,7 +226,7 @@ const styles = StyleSheet.create({
     textAlign: "right"
   },
   metrics: {
-    borderTopColor: "#363A34",
+    borderTopColor: colors.border,
     borderTopWidth: 1,
     flexDirection: "row",
     flexWrap: "wrap",

@@ -16,8 +16,8 @@ type ChipProps = {
 export function Chip({ active = false, icon, label, onPress }: ChipProps) {
   const content = (
     <>
-      {icon ? <Icon name={icon} size="sm" color={active ? "primary" : "textTertiary"} /> : null}
-      <Text variant="label" color={active ? "primary" : "textSecondary"}>
+      {icon ? <Icon name={icon} size="sm" color={active ? "onPrimary" : "textSecondary"} /> : null}
+      <Text variant="label" color={active ? "onPrimary" : "textSecondary"}>
         {label}
       </Text>
     </>
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   base: {
     alignItems: "center",
     alignSelf: "flex-start",
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surfaceSubtle,
     borderColor: colors.border,
     borderRadius: radii.pill,
     borderWidth: 1,
@@ -53,8 +53,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm
   },
   active: {
-    backgroundColor: colors.signal,
-    borderColor: colors.signal
+    backgroundColor: colors.primary,
+    borderColor: colors.primary
   },
   pressed: {
     opacity: 0.68

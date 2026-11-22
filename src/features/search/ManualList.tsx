@@ -102,8 +102,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm
   },
   card: {
-    borderLeftColor: colors.primary,
-    borderLeftWidth: 4
+    borderColor: colors.border
   },
   cardHeader: {
     alignItems: "flex-start",
@@ -112,8 +111,10 @@ const styles = StyleSheet.create({
   },
   documentIcon: {
     alignItems: "center",
-    backgroundColor: colors.signal,
-    borderRadius: 8,
+    backgroundColor: colors.surfaceSubtle,
+    borderColor: colors.border,
+    borderRadius: 6,
+    borderWidth: 1,
     height: 40,
     justifyContent: "center",
     width: 40

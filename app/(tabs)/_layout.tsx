@@ -18,8 +18,8 @@ function TabIcon({ focused, focusedName, name }: TabIconProps) {
     <View style={[styles.iconFrame, focused && styles.iconFrameFocused]}>
       <Icon
         name={focused ? focusedName : name}
-        size={focused ? 23 : 22}
-        color={focused ? "primary" : "textTertiary"}
+        size={focused ? 21 : 21}
+        color={focused ? "onPrimary" : "textTertiary"}
       />
     </View>
   );
@@ -39,7 +39,7 @@ export default function TabsLayout() {
         headerShown: false,
         tabBarPosition: isWideWeb ? "left" : "bottom",
         tabBarActiveTintColor: colors.primary,
-        tabBarActiveBackgroundColor: isWideWeb ? colors.surfaceAccent : "transparent",
+        tabBarActiveBackgroundColor: isWideWeb ? colors.surfaceSubtle : "transparent",
         tabBarInactiveBackgroundColor: "transparent",
         tabBarInactiveTintColor: colors.textTertiary,
         tabBarHideOnKeyboard: true,
@@ -111,7 +111,7 @@ export default function TabsLayout() {
 const styles = StyleSheet.create({
   shell: { flex: 1 },
   tabBar: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.background,
     borderTopColor: colors.border,
     height: 78,
     paddingBottom: 10,
@@ -121,9 +121,9 @@ const styles = StyleSheet.create({
     paddingVertical: 3
   },
   tabBarCompact: {
-    height: 68,
-    paddingBottom: 7,
-    paddingTop: 5
+    height: 74,
+    paddingBottom: 8,
+    paddingTop: 6
   },
   tabBarWide: {
     borderRightColor: colors.border,
@@ -147,13 +147,13 @@ const styles = StyleSheet.create({
   },
   iconFrame: {
     alignItems: "center",
-    borderRadius: radii.pill,
-    height: 32,
+    borderRadius: radii.md,
+    height: 30,
     justifyContent: "center",
-    width: 52
+    width: 44
   },
   iconFrameFocused: {
-    backgroundColor: colors.signal
+    backgroundColor: colors.primary
   },
   railToggle: { left: 18, position: "absolute", top: 24, zIndex: 20 },
   railToggleCollapsed: { left: 20 }

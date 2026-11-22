@@ -86,11 +86,13 @@ const styles = StyleSheet.create({
   },
   iconFrame: {
     alignItems: "center",
-    backgroundColor: colors.signal,
+    backgroundColor: colors.surfaceSubtle,
+    borderColor: colors.border,
     borderRadius: radii.sm,
-    height: 44,
+    borderWidth: 1,
+    height: 42,
     justifyContent: "center",
-    width: 44
+    width: 42
   },
   copy: {
     flex: 1,

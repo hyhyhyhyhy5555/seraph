@@ -45,10 +45,10 @@ export default function LandingScreen() {
           </Pressable>
         </View>
 
-        <View style={[styles.hero, { minHeight: Math.max(height - 72, 640), paddingHorizontal: isCompact ? 18 : 32 }]}>
+        <View style={[styles.hero, { minHeight: Math.max(height - 72, 620), paddingHorizontal: isCompact ? 18 : 32 }]}>
           <View style={styles.heroCopy}>
             <Text variant="label" color="textSecondary" style={styles.eyebrow}>MANUAL-FIRST ASSISTANT</Text>
-            <Text variant="display" style={[styles.heroTitle, { fontSize: isCompact ? 44 : 72, lineHeight: isCompact ? 50 : 78 }]}>
+            <Text variant="display" style={[styles.heroTitle, { fontSize: isCompact ? 40 : 68, lineHeight: isCompact ? 48 : 76 }]}>
               설명서를 찾는 시간을,{"\n"}해결하는 시간으로.
             </Text>
             <Text color="textSecondary" style={styles.heroDescription}>
@@ -60,12 +60,12 @@ export default function LandingScreen() {
             </View>
           </View>
           <View style={styles.heroStage}>
-            <View style={styles.signalOrb}><Icon name="sparkles" size={42} color="signalInk" /></View>
-            <View style={styles.questionStrip}><Text variant="bodyStrong">세탁기에 4C가 떠요</Text></View>
+            <View style={styles.stageBadge}><Icon name="sparkles" size={28} color="onPrimary" /></View>
+            <View style={styles.questionStrip}><Text variant="bodyStrong" color="onPrimary">세탁기에 4C가 떠요</Text></View>
             <View style={styles.answerSheet}>
               <View style={styles.answerHeader}><View style={styles.answerDot} /><Text variant="label">설명서에서 찾은 답</Text></View>
               <View style={styles.answerLineWide} /><View style={styles.answerLine} /><View style={styles.answerLineShort} />
-              <View style={styles.sourcePill}><Icon name="bookmark-outline" size="sm" color="primary" /><Text variant="caption">근거 페이지 연결됨</Text></View>
+              <View style={styles.sourcePill}><Icon name="bookmark-outline" size="sm" color="primary" /><Text variant="caption" color="text">근거 페이지 연결됨</Text></View>
             </View>
           </View>
         </View>
@@ -85,10 +85,10 @@ export default function LandingScreen() {
           <View style={styles.featureStack}>
             {featureCopy.map(([number, title, description], index) => (
               <View key={number} style={[styles.feature, index === 1 && styles.featureAccent]}>
-                <Text variant="caption" color={index === 1 ? "signalInk" : "textTertiary"}>{number}</Text>
+                <Text variant="caption" color={index === 1 ? "onPrimary" : "textTertiary"}>{number}</Text>
                 <View style={styles.featureCopy}>
-                  <Text variant="title" color={index === 1 ? "signalInk" : "text"}>{title}</Text>
-                  <Text color={index === 1 ? "signalInk" : "textSecondary"}>{description}</Text>
+                  <Text variant="title" color={index === 1 ? "onPrimary" : "text"}>{title}</Text>
+                  <Text color={index === 1 ? "onPrimary" : "textSecondary"} style={index === 1 ? styles.invertedBody : undefined}>{description}</Text>
                 </View>
               </View>
             ))}
@@ -97,19 +97,19 @@ export default function LandingScreen() {
 
         <View style={styles.inversionSection}>
           <View style={styles.inversionCopy}>
-            <Text variant="label" color="signal">GROUNDed, NOT GUESSED</Text>
+            <Text variant="label" color="onPrimary" style={styles.invertedEyebrow}>GROUNDED, NOT GUESSED</Text>
             <Text variant="display" color="onPrimary" style={styles.sectionTitle}>그럴듯한 답보다,{"\n"}확인할 수 있는 답.</Text>
-            <Text color="onPrimary">답변 아래의 출처에서 모델명과 페이지를 곧바로 확인하세요.</Text>
+            <Text color="onPrimary" style={styles.invertedBody}>답변 아래의 출처에서 모델명과 페이지를 곧바로 확인하세요.</Text>
           </View>
           <View style={styles.citationStage}>
-            <View style={styles.citationTop}><Icon name="document-text-outline" color="signalInk" /><Text variant="label" color="signalInk">사용설명서 12쪽</Text></View>
-            <Text variant="heading" color="signalInk">급수 호스와 수도꼭지를 확인해주세요.</Text>
-            <Text color="signalInk">4C 오류는 정해진 시간 안에 물이 충분히 공급되지 않을 때 표시됩니다.</Text>
+            <View style={styles.citationTop}><Icon name="document-text-outline" color="primary" /><Text variant="label" color="text">사용설명서 12쪽</Text></View>
+            <Text variant="heading" color="text">급수 호스와 수도꼭지를 확인해주세요.</Text>
+            <Text color="textSecondary">4C 오류는 정해진 시간 안에 물이 충분히 공급되지 않을 때 표시됩니다.</Text>
           </View>
         </View>
 
         <View style={styles.ctaSection}>
-          <View style={styles.ctaMark}><Icon name="book-outline" size={36} color="signalInk" /></View>
+          <View style={styles.ctaMark}><Icon name="book-outline" size={32} color="onPrimary" /></View>
           <Text variant="display" style={styles.ctaTitle}>막힌 순간에,{"\n"}설명서부터 연결합니다.</Text>
           <Button label="Seraph 시작하기" size="lg" trailingIcon="arrow-forward" onPress={() => void enterApp()} />
           <Text variant="caption" color="textTertiary">SERAPH · 등록된 설명서 범위에서 답합니다.</Text>
@@ -126,41 +126,43 @@ function Metric({ value, label }: { value: string; label: string }) {
 const styles = StyleSheet.create({
   safeArea: { backgroundColor: colors.background, flex: 1 },
   page: { backgroundColor: colors.background },
-  nav: { alignItems: "center", flexDirection: "row", height: 72, justifyContent: "space-between", width: "100%" },
+  nav: { alignItems: "center", borderBottomColor: colors.border, borderBottomWidth: 1, flexDirection: "row", height: 68, justifyContent: "space-between", width: "100%" },
   brand: { alignItems: "center", flexDirection: "row", gap: spacing.xs },
-  brandMark: { alignItems: "center", backgroundColor: colors.primary, borderRadius: radii.sm, height: 32, justifyContent: "center", width: 32 },
-  brandDot: { backgroundColor: colors.signal, borderRadius: radii.pill, height: 10, width: 10 },
+  brandMark: { alignItems: "center", backgroundColor: colors.primary, borderRadius: radii.sm, height: 28, justifyContent: "center", width: 28 },
+  brandDot: { backgroundColor: colors.onPrimary, borderRadius: radii.pill, height: 8, width: 8 },
   navAction: { alignItems: "center", flexDirection: "row", gap: spacing.xs, minHeight: sizes.touchTarget },
-  hero: { justifyContent: "space-between", overflow: "hidden", paddingBottom: 48, paddingTop: 56 },
+  hero: { justifyContent: "space-between", overflow: "hidden", paddingBottom: 48, paddingTop: 52 },
   heroCopy: { gap: spacing.lg, maxWidth: 760, zIndex: 2 },
-  eyebrow: { letterSpacing: 1.6 },
-  heroTitle: { letterSpacing: -2.4, maxWidth: 820 },
+  eyebrow: { letterSpacing: 1.4 },
+  heroTitle: { letterSpacing: -2.0, maxWidth: 820 },
   heroDescription: { fontSize: 17, lineHeight: 27, maxWidth: 600 },
   heroActions: { alignItems: "flex-start", gap: spacing.sm },
-  heroStage: { alignSelf: "flex-end", height: 330, marginTop: 48, maxWidth: 880, position: "relative", width: "92%" },
-  signalOrb: { alignItems: "center", backgroundColor: colors.signal, borderRadius: radii.pill, height: 96, justifyContent: "center", position: "absolute", right: 8, top: 0, width: 96, zIndex: 3 },
-  questionStrip: { alignSelf: "flex-end", backgroundColor: colors.surfaceAccent, borderRadius: radii.pill, marginRight: 56, marginTop: 50, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, zIndex: 2 },
-  answerSheet: { backgroundColor: colors.surfaceRaised, borderColor: colors.border, borderRadius: radii.xl, borderWidth: 1, bottom: 0, gap: spacing.md, left: 0, padding: spacing.xl, position: "absolute", width: "84%" },
+  heroStage: { alignSelf: "flex-end", backgroundColor: colors.surface, borderColor: colors.border, borderRadius: radii.lg, borderWidth: 1, height: 320, marginTop: 44, maxWidth: 880, padding: spacing.lg, position: "relative", width: "100%" },
+  stageBadge: { alignItems: "center", backgroundColor: colors.primary, borderRadius: radii.md, height: 64, justifyContent: "center", position: "absolute", right: spacing.lg, top: spacing.lg, width: 64, zIndex: 3 },
+  questionStrip: { alignSelf: "flex-end", backgroundColor: colors.primary, borderRadius: radii.pill, marginRight: 76, marginTop: 20, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, zIndex: 2 },
+  answerSheet: { backgroundColor: colors.surfaceRaised, borderColor: colors.border, borderRadius: radii.md, borderWidth: 1, bottom: spacing.lg, gap: spacing.md, left: spacing.lg, padding: spacing.lg, position: "absolute", width: "82%" },
   answerHeader: { alignItems: "center", flexDirection: "row", gap: spacing.xs },
-  answerDot: { backgroundColor: colors.signal, borderRadius: radii.pill, height: 10, width: 10 },
-  answerLineWide: { backgroundColor: colors.primarySoft, borderRadius: radii.pill, height: 14, width: "88%" },
-  answerLine: { backgroundColor: colors.primarySoft, borderRadius: radii.pill, height: 14, width: "70%" },
-  answerLineShort: { backgroundColor: colors.primarySoft, borderRadius: radii.pill, height: 14, width: "46%" },
-  sourcePill: { alignItems: "center", alignSelf: "flex-start", backgroundColor: colors.surfaceAccent, borderRadius: radii.pill, flexDirection: "row", gap: spacing.xs, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs },
-  proofBand: { alignItems: "center", borderBottomColor: colors.border, borderBottomWidth: 1, borderTopColor: colors.border, borderTopWidth: 1, gap: spacing.xl, paddingHorizontal: spacing.lg, paddingVertical: 56 },
+  answerDot: { backgroundColor: colors.primary, borderRadius: radii.pill, height: 8, width: 8 },
+  answerLineWide: { backgroundColor: colors.surfaceSubtle, borderRadius: radii.sm, height: 12, width: "88%" },
+  answerLine: { backgroundColor: colors.surfaceSubtle, borderRadius: radii.sm, height: 12, width: "70%" },
+  answerLineShort: { backgroundColor: colors.surfaceSubtle, borderRadius: radii.sm, height: 12, width: "46%" },
+  sourcePill: { alignItems: "center", alignSelf: "flex-start", backgroundColor: colors.surfaceSubtle, borderColor: colors.border, borderRadius: radii.pill, borderWidth: 1, flexDirection: "row", gap: spacing.xs, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs },
+  proofBand: { alignItems: "center", backgroundColor: colors.surface, borderBottomColor: colors.border, borderBottomWidth: 1, borderTopColor: colors.border, borderTopWidth: 1, gap: spacing.lg, paddingHorizontal: spacing.lg, paddingVertical: 48 },
   proofRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.xxl, justifyContent: "center" },
   metric: { alignItems: "center", minWidth: 140 },
-  storySection: { alignSelf: "center", gap: spacing.xl, maxWidth: sizes.contentMaxWidth, paddingHorizontal: spacing.xl, paddingVertical: 120, width: "100%" },
+  storySection: { alignSelf: "center", gap: spacing.xl, maxWidth: sizes.contentMaxWidth, paddingHorizontal: spacing.xl, paddingVertical: 96, width: "100%" },
   sectionTitle: { maxWidth: 700 },
   featureStack: { gap: spacing.md, marginTop: spacing.lg },
-  feature: { alignItems: "flex-start", borderTopColor: colors.borderStrong, borderTopWidth: 1, flexDirection: "row", gap: spacing.xl, paddingVertical: spacing.xl },
-  featureAccent: { backgroundColor: colors.signal, borderRadius: radii.lg, borderTopWidth: 0, paddingHorizontal: spacing.xl },
+  feature: { alignItems: "flex-start", borderTopColor: colors.border, borderTopWidth: 1, flexDirection: "row", gap: spacing.xl, paddingVertical: spacing.xl },
+  featureAccent: { backgroundColor: colors.primary, borderRadius: radii.lg, borderTopWidth: 0, paddingHorizontal: spacing.xl },
   featureCopy: { flex: 1, gap: spacing.xs, maxWidth: 620 },
-  inversionSection: { alignItems: "center", backgroundColor: colors.primary, gap: 64, minHeight: 720, paddingHorizontal: spacing.xl, paddingVertical: 120 },
+  inversionSection: { alignItems: "center", backgroundColor: colors.primary, gap: 48, minHeight: 620, paddingHorizontal: spacing.xl, paddingVertical: 96 },
   inversionCopy: { alignSelf: "center", gap: spacing.lg, maxWidth: 820, width: "100%" },
-  citationStage: { backgroundColor: colors.signal, borderRadius: radii.xl, gap: spacing.md, maxWidth: 760, padding: spacing.xl, transform: [{ rotate: "-1deg" }], width: "100%" },
+  invertedEyebrow: { letterSpacing: 1.4, opacity: 0.72 },
+  invertedBody: { opacity: 0.86 },
+  citationStage: { backgroundColor: colors.surfaceRaised, borderColor: colors.border, borderRadius: radii.lg, borderWidth: 1, gap: spacing.md, maxWidth: 760, padding: spacing.xl, width: "100%" },
   citationTop: { alignItems: "center", flexDirection: "row", gap: spacing.xs },
-  ctaSection: { alignItems: "center", gap: spacing.xl, minHeight: 700, paddingHorizontal: spacing.xl, paddingVertical: 140 },
-  ctaMark: { alignItems: "center", backgroundColor: colors.signal, borderRadius: radii.pill, height: 76, justifyContent: "center", width: 76 },
+  ctaSection: { alignItems: "center", gap: spacing.xl, minHeight: 560, paddingHorizontal: spacing.xl, paddingVertical: 112 },
+  ctaMark: { alignItems: "center", backgroundColor: colors.primary, borderRadius: radii.md, height: 64, justifyContent: "center", width: 64 },
   ctaTitle: { maxWidth: 760, textAlign: "center" }
 });

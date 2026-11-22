@@ -26,9 +26,9 @@ export default function SettingsScreen() {
             const selected = preference === option.id;
             return (
               <Pressable key={option.id} accessibilityRole="radio" accessibilityState={{ checked: selected }} onPress={() => void setPreference(option.id)} style={({ pressed }) => [styles.option, selected && styles.optionSelected, pressed && styles.pressed]}>
-                <View style={[styles.iconFrame, selected && styles.iconFrameSelected]}><Icon name={option.icon} color={selected ? "signalInk" : "primary"} /></View>
+                <View style={[styles.iconFrame, selected && styles.iconFrameSelected]}><Icon name={option.icon} color={selected ? "onPrimary" : "primary"} /></View>
                 <View style={styles.optionCopy}><Text variant="bodyStrong">{option.label}</Text><Text variant="caption" color="textSecondary">{option.description}</Text></View>
-                <Icon name={selected ? "checkmark-circle" : "ellipse-outline"} color={selected ? "success" : "textTertiary"} />
+                <Icon name={selected ? "checkmark-circle" : "ellipse-outline"} color={selected ? "primary" : "textTertiary"} />
               </Pressable>
             );
           })}
@@ -49,10 +49,10 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   section: { gap: spacing.md, marginBottom: spacing.xl },
   optionList: { gap: spacing.xs },
-  option: { alignItems: "center", backgroundColor: colors.surface, borderColor: colors.border, borderRadius: radii.md, borderWidth: 1, flexDirection: "row", gap: spacing.sm, minHeight: 76, padding: spacing.md },
-  optionSelected: { backgroundColor: colors.surfaceAccent, borderColor: colors.surfaceAccentStrong },
-  iconFrame: { alignItems: "center", backgroundColor: colors.primarySoft, borderRadius: radii.sm, height: sizes.touchTarget, justifyContent: "center", width: sizes.touchTarget },
-  iconFrameSelected: { backgroundColor: colors.signal },
+  option: { alignItems: "center", backgroundColor: colors.surfaceRaised, borderColor: colors.border, borderRadius: radii.md, borderWidth: 1, flexDirection: "row", gap: spacing.sm, minHeight: 74, padding: spacing.md },
+  optionSelected: { backgroundColor: colors.surface, borderColor: colors.primary, borderWidth: 1.5 },
+  iconFrame: { alignItems: "center", backgroundColor: colors.surfaceSubtle, borderColor: colors.border, borderRadius: radii.sm, borderWidth: 1, height: sizes.touchTarget, justifyContent: "center", width: sizes.touchTarget },
+  iconFrameSelected: { backgroundColor: colors.primary, borderColor: colors.primary },
   optionCopy: { flex: 1, gap: spacing.xxs },
   pressed: { opacity: 0.72 }
 });

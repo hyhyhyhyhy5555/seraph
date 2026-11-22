@@ -22,13 +22,13 @@ type ButtonProps = Omit<PressableProps, "children" | "style"> & {
 
 const palette = {
   primary: {
-    background: colors.signal,
-    border: colors.signal,
-    text: "signalInk" as const,
-    icon: "signalInk" as const
+    background: colors.primary,
+    border: colors.primary,
+    text: "onPrimary" as const,
+    icon: "onPrimary" as const
   },
   secondary: {
-    background: colors.surface,
+    background: colors.surfaceRaised,
     border: colors.borderStrong,
     text: "text" as const,
     icon: "primary" as const
@@ -99,7 +99,7 @@ export function Button({
 const styles = StyleSheet.create({
   base: {
     alignItems: "center",
-    borderRadius: radii.sm,
+    borderRadius: radii.md,
     borderWidth: 1,
     justifyContent: "center",
     minHeight: sizes.touchTarget

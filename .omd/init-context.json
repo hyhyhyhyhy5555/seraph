@@ -1,0 +1,21 @@
+{
+  "reference_id": "kream",
+  "description": "KREAM 스타일의 순백(#FFFFFF)·차콜(#222222)·뉴트럴 그레이(#F5F5F5/#F4F4F4) 무채색 크롬과 Pretendard를 적용한 전자기기 설명서 검색 및 RAG AI 채팅 앱 (연두색 계열 제거)",
+  "mode": "inspired",
+  "delta_set": {
+    "axes": {},
+    "voiceHints": [
+      "direct",
+      "operational",
+      "evidence-grounded",
+      "calm-korean"
+    ],
+    "matchedKeywords": [
+      "minimal",
+      "monochrome",
+      "crisp"
+    ],
+    "warnings": []
+  },
+  "bootstrapped_at": "2026-11-23T01:21:00+09:00"
+}

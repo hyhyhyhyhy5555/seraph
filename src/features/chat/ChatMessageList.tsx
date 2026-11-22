@@ -42,7 +42,7 @@ function MessageBubble({ message }: { message: ChatMessage }) {
     <View style={[styles.messageRow, isUser && styles.userMessageRow]}>
       {!isUser ? (
         <View style={styles.avatar}>
-          <Icon name="sparkles" size="sm" color="primary" />
+          <Icon name="sparkles" size="sm" color="onPrimary" />
         </View>
       ) : null}
       <View style={[styles.bubble, isUser ? styles.userBubble : styles.assistantBubble]}>
@@ -63,7 +63,7 @@ function LoadingMessage() {
   return (
     <View accessibilityLiveRegion="polite" style={styles.messageRow}>
       <View style={styles.avatar}>
-        <Icon name="sparkles" size="sm" color="primary" />
+        <Icon name="sparkles" size="sm" color="onPrimary" />
       </View>
       <View style={[styles.bubble, styles.assistantBubble, styles.loadingBubble]}>
         <ActivityIndicator color={colors.primary} size="small" />
@@ -75,7 +75,7 @@ function LoadingMessage() {
 
 function CitationCard({ citation }: { citation: RagCitation }) {
   return (
-    <Card padding="sm" variant="tinted" style={styles.citationCard}>
+    <Card padding="sm" variant="outlined" style={styles.citationCard}>
       <View style={styles.citationHeading}>
         <Icon name="bookmark-outline" size="sm" color="primary" />
         <Text variant="label" style={styles.citationTitle}>
@@ -122,11 +122,11 @@ const styles = StyleSheet.create({
   },
   avatar: {
     alignItems: "center",
-    backgroundColor: colors.signal,
+    backgroundColor: colors.primary,
     borderRadius: radii.sm,
-    height: 34,
+    height: 32,
     justifyContent: "center",
-    width: 34
+    width: 32
   },
   bubble: {
     borderRadius: radii.lg,
