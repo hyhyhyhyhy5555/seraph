@@ -1,0 +1,1556 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23a50034'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-family='sans-serif' font-size='14' font-weight='700'%3ELG%3C/text%3E%3C/svg%3E" />
+  <title>LG 가전 사용설명서 수집 도우미 — Seraph</title>
+  <style>
+    :root {
+      --bg: #f5f6f8;
+      --surface: #ffffff;
+      --surface-muted: #f8f9fb;
+      --border: #e2e6ee;
+      --border-strong: #cdd4e0;
+      --text: #171c26;
+      --text-secondary: #525d70;
+      --text-muted: #7b8698;
+      --brand: #a50034;
+      --brand-hover: #87002a;
+      --brand-soft: #fdf0f4;
+      --ok: #137a47;
+      --ok-soft: #eaf7f0;
+      --warn: #b45309;
+      --warn-soft: #fef6e7;
+      --info: #1d4ed8;
+      --info-soft: #eef4ff;
+      --danger: #b91c1c;
+      --danger-soft: #fef2f2;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Malgun Gothic", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 20px 20px 64px;
+    }
+
+    /* Header */
+    .header {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+
+    .header-top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .title-group h1 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 9px;
+      border-radius: 999px;
+      background: var(--brand);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .subtitle {
+      margin: 6px 0 0;
+      font-size: 13.5px;
+      color: var(--text-secondary);
+    }
+
+    .header-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 13px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-strong);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.12s ease, border-color 0.12s ease, transform 0.06s ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      background: var(--surface-muted);
+      border-color: #aeb8c9;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-primary {
+      background: var(--brand);
+      border-color: var(--brand);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--brand-hover);
+      border-color: var(--brand-hover);
+    }
+
+    .btn-danger-ghost {
+      color: var(--danger);
+      border-color: #f3c4c4;
+      background: #fff;
+    }
+
+    .btn-danger-ghost:hover {
+      background: var(--danger-soft);
+    }
+
+    /* Progress Section */
+    .progress-wrap {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .progress-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      font-size: 12.5px;
+    }
+
+    .stat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .stat-pill.ok { background: var(--ok-soft); border-color: #bce4cf; color: var(--ok); }
+    .stat-pill.info { background: var(--info-soft); border-color: #c7d9ff; color: var(--info); }
+    .stat-pill.warn { background: var(--warn-soft); border-color: #f5d8a1; color: var(--warn); }
+    .stat-pill.danger { background: var(--danger-soft); border-color: #f5c2c2; color: var(--danger); }
+
+    .save-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 10px;
+      background: #e9edf4;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--brand), #d42058);
+      border-radius: 999px;
+      transition: width 0.25s ease;
+      width: 0%;
+    }
+
+    /* Guide Drawer */
+    .guide-box {
+      margin-top: 16px;
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      font-size: 13px;
+      display: none;
+    }
+
+    .guide-box.open {
+      display: block;
+    }
+
+    .guide-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .guide-card h3 {
+      margin: 0 0 6px;
+      font-size: 13.5px;
+      color: var(--text);
+    }
+
+    .guide-card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--text-secondary);
+    }
+
+    .guide-card li {
+      margin-bottom: 4px;
+    }
+
+    .root-config {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border-strong);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .root-config label {
+      font-weight: 600;
+      color: var(--text-secondary);
+      font-size: 12.5px;
+    }
+
+    .root-config input {
+      flex: 1;
+      min-width: 260px;
+      padding: 6px 10px;
+      border: 1px solid var(--border-strong);
+      border-radius: 6px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    /* Sticky Controls */
+    .controls {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(245, 246, 248, 0.94);
+      backdrop-filter: blur(8px);
+      padding: 12px 0 10px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .category-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border-strong);
+      background: var(--surface);
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+
+    .chip:hover {
+      border-color: var(--brand);
+      color: var(--brand);
+    }
+
+    .chip.active {
+      background: var(--brand);
+      border-color: var(--brand);
+      color: #fff;
+    }
+
+    .chip.completed:not(.active) {
+      background: var(--ok-soft);
+      border-color: #a8dfc2;
+      color: var(--ok);
+    }
+
+    .chip .count {
+      opacity: 0.85;
+      font-variant-numeric: tabular-nums;
+      font-size: 11px;
+    }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 240px;
+      max-width: 440px;
+      padding: 8px 12px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      font-size: 13.5px;
+      color: var(--text);
+    }
+
+    .search-input:focus {
+      outline: 2px solid rgba(165, 0, 52, 0.2);
+      border-color: var(--brand);
+    }
+
+    .status-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .status-tab {
+      padding: 6px 11px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-strong);
+      background: var(--surface);
+      color: var(--text-secondary);
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .status-tab.active {
+      background: var(--text);
+      border-color: var(--text);
+      color: #fff;
+    }
+
+    /* Group Section */
+    .group-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+      overflow: hidden;
+    }
+
+    .group-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 18px;
+      background: #fbfcfe;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .group-title {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .seraph-tag {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text);
+    }
+
+    .slug-code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 11.5px;
+      color: var(--text-muted);
+      background: #eef1f6;
+      padding: 2px 7px;
+      border-radius: 6px;
+    }
+
+    .lg-path-badge {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--brand);
+      background: var(--brand-soft);
+      border: 1px solid #f4cad6;
+      padding: 2px 9px;
+      border-radius: 999px;
+    }
+
+    .folder-btn {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 11.5px;
+      padding: 5px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-strong);
+      background: #fff;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .folder-btn:hover {
+      border-color: var(--info);
+      color: var(--info);
+      background: var(--info-soft);
+    }
+
+    /* Model Item Rows */
+    .model-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .model-row {
+      display: grid;
+      grid-template-columns: minmax(250px, 1.35fr) minmax(260px, 1.25fr) minmax(220px, 1fr);
+      gap: 14px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      align-items: start;
+      transition: background 0.12s ease;
+    }
+
+    .model-row:last-child {
+      border-bottom: none;
+    }
+
+    .model-row.is-done {
+      background: #f6fbf8;
+    }
+
+    .model-row.is-duplicate {
+      background: #fffdf6;
+    }
+
+    .model-row.is-not-found {
+      background: #fff8f8;
+    }
+
+    @media (max-width: 960px) {
+      .model-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .meta-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .row-id {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .series-name {
+      font-weight: 700;
+      font-size: 14.5px;
+      color: var(--text);
+    }
+
+    .sub-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .mini-tag {
+      background: #f0f2f6;
+      padding: 1px 7px;
+      border-radius: 5px;
+      font-size: 11.5px;
+    }
+
+    .ext-link {
+      color: var(--info);
+      text-decoration: none;
+      font-size: 11.5px;
+      font-weight: 600;
+    }
+
+    .ext-link:hover {
+      text-decoration: underline;
+    }
+
+    .tip-text {
+      font-size: 12px;
+      color: #6b4b12;
+      background: #fef9ec;
+      border: 1px solid #f7e4b5;
+      border-radius: 6px;
+      padding: 5px 8px;
+      margin-top: 4px;
+    }
+
+    /* Copy Column */
+    .copy-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .copy-primary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--brand);
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      transition: all 0.12s ease;
+    }
+
+    .copy-primary:hover {
+      background: var(--brand-soft);
+    }
+
+    .copy-primary.copied {
+      background: var(--ok);
+      border-color: var(--ok);
+      color: #fff;
+    }
+
+    .copy-label {
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--brand);
+    }
+
+    .copy-primary.copied .copy-label {
+      color: #fff;
+    }
+
+    .copy-sub-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .copy-secondary {
+      flex: 1;
+      min-width: 110px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 5px 9px;
+      border-radius: 6px;
+      border: 1px solid var(--border-strong);
+      background: var(--surface-muted);
+      color: var(--text);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .copy-secondary:hover {
+      border-color: var(--text-secondary);
+      background: #eef1f6;
+    }
+
+    .copy-secondary.copied {
+      background: var(--ok-soft);
+      border-color: var(--ok);
+      color: var(--ok);
+    }
+
+    .copy-sub-tag {
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
+      font-size: 10.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Status Column */
+    .status-col {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .status-action-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .status-select {
+      flex: 1;
+      padding: 7px 9px;
+      border-radius: 7px;
+      border: 1px solid var(--border-strong);
+      background: #fff;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .quick-done-btn {
+      padding: 7px 10px;
+      border-radius: 7px;
+      border: 1px solid #a8dfc2;
+      background: var(--ok-soft);
+      color: var(--ok);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .quick-done-btn:hover {
+      background: #d6f0e2;
+    }
+
+    .quick-done-btn.active {
+      background: var(--ok);
+      border-color: var(--ok);
+      color: #fff;
+    }
+
+    .note-input {
+      width: 100%;
+      padding: 6px 9px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #fff;
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    .note-input:focus {
+      outline: none;
+      border-color: var(--brand);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      background: var(--surface);
+      border: 1px dashed var(--border-strong);
+      border-radius: var(--radius);
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: #171c26;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.16s ease, transform 0.16s ease;
+      z-index: 100;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="header-top">
+        <div class="title-group">
+          <h1>
+            <span class="brand-badge">LG × Seraph</span>
+            LG 가전 사용설명서 수집 도우미
+          </h1>
+          <p class="subtitle">
+            Seraph <code>1. 가전</code> 15개 핵심군 · 국내 정식 대표 모델 리스트 (원클릭 복사 · 자동 로컬 저장 · CSV 입출력)
+          </p>
+        </div>
+        <div class="header-actions">
+          <a
+            class="btn btn-primary"
+            href="https://www.lge.co.kr/support/product-manuals"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            LG 매뉴얼 다운로드 열기 ↗
+          </a>
+          <button type="button" class="btn" id="toggleGuideBtn">작업 가이드</button>
+          <button type="button" class="btn" id="importCsvBtn">CSV 불러오기</button>
+          <input type="file" id="csvFileInput" accept=".csv,text/csv" hidden />
+          <button type="button" class="btn" id="exportCsvBtn">진행결과 CSV 내보내기</button>
+          <button type="button" class="btn btn-danger-ghost" id="resetBtn">초기화</button>
+        </div>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-header">
+          <div class="stats-row" id="statsRow"></div>
+          <div class="save-meta" id="saveMeta">로컬 자동 저장 활성화됨</div>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <section class="guide-box" id="guideBox">
+        <div class="guide-grid">
+          <div class="guide-card">
+            <h3>1. 검색 및 복사 요령</h3>
+            <ul>
+              <li>카테고리 칩을 선택해 <strong>LG 사이트 카테고리 변경 횟수</strong>를 줄이세요.</li>
+              <li><strong>주 모델명</strong>을 클릭하면 마침표(<code>.</code>) 앞 순수 모델명이 바로 복사됩니다.</li>
+              <li>검색 결과가 없으면 <strong>대체코드</strong> → <strong>접두어(자동완성)</strong> 순서로 시도하세요.</li>
+            </ul>
+          </div>
+          <div class="guide-card">
+            <h3>2. 다운로드 PDF 선택 기준</h3>
+            <ul>
+              <li><strong>필수:</strong> 한국어 정식 <strong>사용설명서 PDF(본편)</strong></li>
+              <li><strong>제외:</strong> 영문 설명서, 간단 설명서(본편 있을 때), 설치설명서 단독, 소프트웨어/펌웨어</li>
+              <li>같은 시리즈에서 이미 받은 <code>MFL*.pdf</code>와 문서번호가 같으면 <strong>중복PDF</strong>로 표시하세요.</li>
+            </ul>
+          </div>
+          <div class="guide-card">
+            <h3>3. 파일명 유지 &amp; macOS 빠른 저장</h3>
+            <ul>
+              <li>LG 원본 파일명(예: <code>MFL71892301.pdf</code>)은 <strong>바꾸지 말고 그대로</strong> 저장하세요.</li>
+              <li>그룹 상단 <strong>폴더 경로 복사</strong> 클릭 → 저장 창에서 <code>Cmd + Shift + G</code> → 붙여넣기 → <code>Enter</code>.</li>
+              <li>작업 중간·완료 시 <strong>진행결과 CSV 내보내기</strong>로 백업해 두세요.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="root-config">
+          <label for="repoRootInput">로컬 프로젝트 루트 (폴더 복사 기준):</label>
+          <input id="repoRootInput" type="text" placeholder="/path/to/seraph_rn" />
+        </div>
+      </section>
+    </header>
+
+    <div class="controls">
+      <div class="category-chips" id="categoryChips"></div>
+      <div class="filter-row">
+        <input
+          type="search"
+          id="searchInput"
+          class="search-input"
+          placeholder="모델명, 시리즈명, 카테고리, 메모 검색... (예: FX25, 에어컨, 식기세척기)"
+        />
+        <div class="status-tabs" id="statusTabs">
+          <button type="button" class="status-tab" data-status="all">전체</button>
+          <button type="button" class="status-tab active" data-status="todo">미작업만</button>
+          <button type="button" class="status-tab" data-status="completed">완료·대체성공</button>
+          <button type="button" class="status-tab" data-status="duplicate">중복PDF</button>
+          <button type="button" class="status-tab" data-status="not_found">미검색</button>
+        </div>
+      </div>
+    </div>
+
+    <main id="contentArea"></main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script id="embedded-csv" type="text/csv">
+id,lg_group_order,lg_category_path,seraph_category_no,seraph_category_name,seraph_slug_path,inbox_folder,series_name,form_factor,primary_model,fallback_model,autocomplete_prefix,release_window,search_tip,source_ref_url,status,downloaded_file,note
+LG-001,1,세탁기/건조기/의류관리기 > 드럼세탁기,1.2,세탁기,appliances/washer,.local/manuals/lg-inbox/1.2-washer,트롬 오브제컬렉션 드럼세탁기 25kg,드럼 대용량 (스팀/자동세제함),FX25EA,FX25VS,FX25,2023~2025,마침표(.) 앞까지만 입력; 색상·유통 끝자리만 다른 파생모델은 공용 PDF 공유,https://www.lge.co.kr/search/result?search=FX25EA,done,WM_KOR_MFL71792812_08_250904_00_OM_WEB.pdf,1차 확보 완료
+LG-002,1,세탁기/건조기/의류관리기 > 드럼세탁기,1.2,세탁기,appliances/washer,.local/manuals/lg-inbox/1.2-washer,트롬 인공지능 DD 드럼세탁기 24kg/21kg,드럼 표준/대용량,FX24EN,F21VDT,FX24,2021~2024,FX24 미검색 시 대체코드 F21VDT 또는 FX24/F21 자동완성 선택,https://www.lge.co.kr/search/result?search=FX24EN,done,WM_KOR_MFL71792818_10_251204_00_OM_WEB.pdf,1차 확보 완료
+LG-003,1,세탁기/건조기/의류관리기 > 통돌이,1.2,세탁기,appliances/washer,.local/manuals/lg-inbox/1.2-washer,통돌이 오브제컬렉션/블랙라벨 20~22kg,통돌이 대용량 DD모터,T20WT,T20VVD,T20,2022~2025,카테고리를 '통돌이'로 선택한 뒤 T20WT 입력; 미검색 시 T20 자동완성 선택,https://www.lge.co.kr/search/result?search=T20WT,done,WM_KOR_MFL71831204_02_240612_00_OM_WEB.pdf,1차 확보 완료
+LG-004,1,세탁기/건조기/의류관리기 > 통돌이,1.2,세탁기,appliances/washer,.local/manuals/lg-inbox/1.2-washer,통돌이 스마트 인버터/표준형 16kg,통돌이 중형 16kg,TR16DV6,T16DT,TR16,2021~2024,TR은 스마트 인버터·T는 DD모터 계열; 검색 결과 중 한국어 본편 사용설명서 선택,https://www.lge.co.kr/search/result?search=TR16DV6,done,WM_KOR_MFL71831233_00_250422_00_OM_WEB.pdf,1차 확보 완료
+LG-005,1,세탁기/건조기/의류관리기 > 미니워시,1.2,세탁기,appliances/washer,.local/manuals/lg-inbox/1.2-washer,트롬 오브제컬렉션 미니워시 4kg,하단 결합/단독 소형 4kg,FX4VC,F4WC,FX4,2022~2025,LG 메뉴에 미니워시가 분리되지 않은 경우 '드럼세탁기' 또는 '통돌이'에서 FX4 검색,https://www.lge.co.kr/search/result?search=FX4VC,done,MW_KOR_MFL71836006_02_240607_00_OM_WEB.pdf,1차 확보 완료
+LG-006,2,세탁기/건조기/의류관리기 > 의류건조기,1.24,의류 건조기,appliances/dryer,.local/manuals/lg-inbox/1.24-dryer,트롬 오브제컬렉션 건조기 22kg,대용량 22kg (트루스팀/AI),RD22KS,RD22WS,RD22,2024~2025,색상 코드(K/W/G/V)만 다른 22kg 모델은 동일 공용 PDF이므로 1건만 다운로드,https://www.lge.co.kr/search/result?search=RD22KS,done,DR_KOR_MFL71831442_04_260826_00_OM_WEB.pdf,1차 확보 완료
+LG-007,2,세탁기/건조기/의류관리기 > 의류건조기,1.24,의류 건조기,appliances/dryer,.local/manuals/lg-inbox/1.24-dryer,트롬 오브제컬렉션 건조기 21kg,대용량 21kg (스팀/이지서클),RD21GN,RD21GSGR,RD21,2023~2024,RD22와 PDF 문서번호(MFL*)가 같다면 중복PDF로 표시하고 건너뛰기,https://www.lge.co.kr/search/result?search=RD21GN,done,DR_KOR_MFL71831424_06_250627_00_OM_WEB.pdf,1차 확보 완료
+LG-008,2,세탁기/건조기/의류관리기 > 의류건조기,1.24,의류 건조기,appliances/dryer,.local/manuals/lg-inbox/1.24-dryer,트롬 오브제컬렉션 건조기 20kg,표준 20kg (RD/RG 세대),RD20WNA,RG20WN,RD20,2022~2024,신형 RD20이 RD21/22와 공용 매뉴얼이면 구세대 RG20WN으로 별도 매뉴얼 확보,https://www.lge.co.kr/search/result?search=RD20WNA,duplicate,DR_KOR_MFL71831424_06_250627_00_OM_WEB.pdf,LG-007과 공용 PDF 중복
+LG-009,2,세탁기/건조기/의류관리기 > 의류건조기,1.24,의류 건조기,appliances/dryer,.local/manuals/lg-inbox/1.24-dryer,트롬 건조기 10kg 컴팩트,1~2인가구 소형 10kg,RH10WTW,RH10VTA,RH10,2021~2024,10kg RH 시리즈 전용 매뉴얼; 마침표 앞 코드 그대로 입력,https://www.lge.co.kr/search/result?search=RH10WTW,done,DR_KOR_MFL71887497_01_240220_00_OM_WEB.pdf,1차 확보 완료
+LG-010,3,세탁기/건조기/의류관리기 > 워시타워,1.15,세탁기 겸 건조기,appliances/washer-dryer,.local/manuals/lg-inbox/1.15-washer-dryer,트롬 오브제컬렉션 워시타워 대용량 (W20),일체형 대용량 24kg+20kg (2차 보완),W20GNM,W20WD,W20,2022~2024,LG 매뉴얼 직행 버튼 클릭 또는 W20 자동완성 선택; 구형/주력 대용량 워시타워,https://www.lge.co.kr/support/product-manuals?title=W20GNM,todo,,2차 보완 모델
+LG-011,3,세탁기/건조기/의류관리기 > 워시타워,1.15,세탁기 겸 건조기,appliances/washer-dryer,.local/manuals/lg-inbox/1.15-washer-dryer,트롬 오브제컬렉션 워시타워 대용량 (W20/WL21),일체형 대용량 25kg+21kg (2차 보완),W20GEZ,WL21GEHU,WL21,2022~2024,LG-010과 PDF 문서번호가 같다면 중복PDF로 표시,https://www.lge.co.kr/support/product-manuals?title=W20GEZ,todo,,2차 보완 모델
+LG-012,3,세탁기/건조기/의류관리기 > 워시타워,1.15,세탁기 겸 건조기,appliances/washer-dryer,.local/manuals/lg-inbox/1.15-washer-dryer,트롬 오브제컬렉션 워시타워 컴팩트,소형 일체형 (13kg+10kg),W10BHN,W10WAN,W10,2022~2025,워시타워 컴팩트 전용 조작부 매뉴얼; 미검색 시 W10 또는 W1310 자동완성 확인,https://www.lge.co.kr/search/result?search=W10BHN,done,WM_KOR_MFL71831423_07_260320_00_OM_WEB.pdf,1차 확보 완료
+LG-013,3,세탁기/건조기/의류관리기 > 워시콤보,1.15,세탁기 겸 건조기,appliances/washer-dryer,.local/manuals/lg-inbox/1.15-washer-dryer,트롬 오브제컬렉션 워시콤보 25kg,단일 드럼 올인원 세탁건조기,FH25EA,FH25GA,FH25,2024~2025,워시콤보 메뉴가 별도 없으면 '드럼세탁기' 또는 '워시타워' 카테고리에서 FH25 검색,https://www.lge.co.kr/search/result?search=FH25EA,done,WM_KOR_MFLR71792827_06_251204_00_OM_WEB.pdf,1차 확보 완료
+LG-014,4,주방가전 > 냉장고,1.10,냉장고,appliances/refrigerator,.local/manuals/lg-inbox/1.10-refrigerator,디오스 오브제컬렉션 상냉장 하냉동 노크온 870L급,4도어 노크온 매직스페이스 (2차 보완),M873GBB572,M872GBB041,M873,2022~2024,끝자리 S 제거된 기본 서비스 모델명; LG 매뉴얼 직행 클릭 또는 M873 자동완성 선택,https://www.lge.co.kr/support/product-manuals?title=M873GBB572,todo,,2차 보완 모델
+LG-015,4,주방가전 > 냉장고,1.10,냉장고,appliances/refrigerator,.local/manuals/lg-inbox/1.10-refrigerator,디오스 오브제컬렉션 상냉장 하냉동 870L급 (T873),4도어 일반/매직스페이스 (2차 보완),T873MEE111,T873MHH111,T873,2022~2024,LG 매뉴얼 직행 클릭 또는 T873 자동완성 선택; M873과 다른 PDF인지 확인,https://www.lge.co.kr/support/product-manuals?title=T873MEE111,todo,,2차 보완 모델
+LG-016,4,주방가전 > 냉장고,1.10,냉장고,appliances/refrigerator,.local/manuals/lg-inbox/1.10-refrigerator,디오스 오브제컬렉션 얼음정수기 냉장고 820L급 (W822),4도어 직수 얼음정수기 (2차 보완),W822GBB152,W822GBB462,W822,2022~2024,끝자리 S 없는 기본 모델명; 정수 필터·제빙 관리 포함 본편 다운로드,https://www.lge.co.kr/support/product-manuals?title=W822GBB152,todo,,2차 보완 모델
+LG-017,4,주방가전 > 냉장고,1.10,냉장고,appliances/refrigerator,.local/manuals/lg-inbox/1.10-refrigerator,디오스 슬림 2도어 상냉장 하냉동 (모던엣지/유러피안),슬림 2도어 320~344L급 (2차 보완),R-M321GCV,Q343MHHF33,M321,2021~2024,LG 매뉴얼 직행 클릭 또는 '상냉장/하냉동' 카테고리에서 M321/Q343 자동완성 선택,https://www.lge.co.kr/support/product-manuals?title=R-M321GCV,todo,,2차 보완 모델
+LG-018,4,주방가전 > 냉장고,1.10,냉장고,appliances/refrigerator,.local/manuals/lg-inbox/1.10-refrigerator,디오스 오브제컬렉션 컨버터블 패키지 (Y321),1도어 냉동/냉장 전용고 (2차 보완),Y321MW3S,Y321MB3S,Y321,2021~2024,LG 매뉴얼 직행 클릭 또는 '컨버터블 패키지' 카테고리에서 Y321 자동완성 선택,https://www.lge.co.kr/support/product-manuals?title=Y321MW3S,todo,,2차 보완 모델
+LG-019,5,주방가전 > 양문형 냉장고,1.22,양문형 냉장고,appliances/side-by-side-refrigerator,.local/manuals/lg-inbox/1.22-side-by-side-refrigerator,디오스 양문형 냉장고 830L급 (S833),2도어 양문형 매직스페이스 (2차 보완),S833S30,S831TS35,S833,2021~2024,LG 매뉴얼 직행 클릭 또는 '양문형 냉장고' 카테고리에서 S833/S831 검색,https://www.lge.co.kr/support/product-manuals?title=S833S30,todo,,2차 보완 모델
+LG-020,5,주방가전 > 양문형 냉장고,1.22,양문형 냉장고,appliances/side-by-side-refrigerator,.local/manuals/lg-inbox/1.22-side-by-side-refrigerator,디오스 양문형 냉장고 830L급 (S831/S834),2도어 양문형 일반/오브제 (2차 보완),S831NS35,S834W30V,S831,2021~2024,S833과 동일 PDF면 중복PDF 체크; 대체코드 S834W30V도 확인,https://www.lge.co.kr/support/product-manuals?title=S831NS35,todo,,2차 보완 모델
+LG-021,5,주방가전 > 양문형 냉장고,1.22,양문형 냉장고,appliances/side-by-side-refrigerator,.local/manuals/lg-inbox/1.22-side-by-side-refrigerator,디오스 양문형 냉장고 630L 세미빌트인 (S631),2도어 컴팩트 양문형 (2차 보완),S631S32,S634MHH30Q,S631,2021~2024,630L급 세미빌트인 양문형; LG 매뉴얼 직행 클릭 또는 S631 자동완성 선택,https://www.lge.co.kr/support/product-manuals?title=S631S32,todo,,2차 보완 모델
+LG-022,6,주방가전 > 김치냉장고,1.8,김치냉장고,appliances/kimchi-fridge,.local/manuals/lg-inbox/1.8-kimchi-fridge,디오스 오브제컬렉션 김치톡톡 스탠드 4도어,스탠드형 4룸 대용량 (2차 보완),Z491GBB151,K411SN191,Z491,2021~2024,끝자리 S 없는 기본 모델명; 미검색 시 대체코드 K411SN191 또는 Z491 자동완성 선택,https://www.lge.co.kr/support/product-manuals?title=Z491GBB151,todo,,2차 보완 모델
+LG-023,6,주방가전 > 김치냉장고,1.8,김치냉장고,appliances/kimchi-fridge,.local/manuals/lg-inbox/1.8-kimchi-fridge,디오스 오브제컬렉션 김치톡톡 스탠드 3도어,스탠드형 3룸 슬림 (2차 보완),Z330MEEF11,K338W141,Z330,2021~2024,스탠드 3도어 대표 모델; 미검색 시 대체코드 K338W141 또는 Z330 자동완성 선택,https://www.lge.co.kr/support/product-manuals?title=Z330MEEF11,todo,,2차 보완 모델
+LG-024,6,주방가전 > 김치냉장고,1.8,김치냉장고,appliances/kimchi-fridge,.local/manuals/lg-inbox/1.8-kimchi-fridge,디오스 김치톡톡 뚜껑형 2도어 217~220L급,뚜껑형 2룸 표준,K223LW121,K222S121,K223,2022~2025,뚜껑형 전용 조작부·보관모드 매뉴얼 확보 대상,https://www.lge.co.kr/search/result?search=K223LW121,done,REF_KOR_MFL70960302_10_240911_00_OM_WEB.pdf,1차 확보 완료
+LG-025,6,주방가전 > 김치냉장고,1.8,김치냉장고,appliances/kimchi-fridge,.local/manuals/lg-inbox/1.8-kimchi-fridge,디오스 김치톡톡 뚜껑형 소형 128~131L급,뚜껑형 1룸 소형,K131LW121,K228S111,K131,2021~2024,소형 1룸 뚜껑형; K223과 공용 PDF라면 중복PDF 표시,https://www.lge.co.kr/search/result?search=K131LW121,done,REF_KOR_EBAX00124H_00_250926_00_OM_WEB.pdf,1차 확보 완료
+LG-026,7,주방가전 > 식기세척기,1.21,식기 세척기,appliances/dishwasher,.local/manuals/lg-inbox/1.21-dishwasher,디오스 오브제컬렉션 식기세척기 14인용 빌트인,14인용 3단선반 빌트인 (트루스팀·열풍),DUE6BGL2,DUE6BGL3E,DUE6,2023~2025,DUE6 빌트인 대표 코드; 설치설명서가 아닌 '사용설명서' PDF 다운로드,https://www.lge.co.kr/search/result?search=DUE6BGL2,done,DW_KOR_MFL71959103_05_240329_00_OM_WEB.pdf,1차 확보 완료
+LG-027,7,주방가전 > 식기세척기,1.21,식기 세척기,appliances/dishwasher,.local/manuals/lg-inbox/1.21-dishwasher,디오스 오브제컬렉션 식기세척기 14인용 프리스탠딩,14인용 프리스탠딩/겸용,DFE6BG,DUE6BGE,DFE6,2023~2025,DUE6BGL2와 동일 공용 PDF이면 중복PDF로 표시 후 다음 항목 이동,https://www.lge.co.kr/search/result?search=DFE6BG,duplicate,DW_KOR_MFL71959103_05_240329_00_OM_WEB.pdf,LG-026과 공용 PDF 중복
+LG-028,7,주방가전 > 식기세척기,1.21,식기 세척기,appliances/dishwasher,.local/manuals/lg-inbox/1.21-dishwasher,디오스 오브제컬렉션 식기세척기 12인용 빌트인,12인용 2단선반 표준형,DUE2BGE,DUE1BGLE,DUE2,2022~2025,12인용 2단 선반 시리즈; 미검색 시 DUE2 또는 DUE1 자동완성 선택,https://www.lge.co.kr/search/result?search=DUE2BGE,done,DW_KOR_MFL71959119_06_260319_00_OM_WEB.pdf,1차 확보 완료
+LG-029,7,주방가전 > 식기세척기,1.21,식기 세척기,appliances/dishwasher,.local/manuals/lg-inbox/1.21-dishwasher,디오스 오브제컬렉션 식기세척기 6인용 카운터탑,6인용 싱크대 상판형,D0633WFA,D0633LFN,D0633,2023~2025,카운터탑 6인용 전용 매뉴얼 (12/14인용과 구조 상이),https://www.lge.co.kr/search/result?search=D0633WFA,done,DW_KOR_MFL47377727_10_240814_00_OM_WEB.pdf,1차 확보 완료
+LG-030,8,주방가전 > 광파오븐,1.25,오븐,appliances/oven,.local/manuals/lg-inbox/1.25-oven,디오스 오브제컬렉션 광파오븐 32L 스팀,32L 스팀·에어수비드 신형,MLJ32ERS,MLJ32HWS,MLJ32,2023~2025,요리책자(레시피) PDF가 별도 있을 수 있음 — '사용설명서' 본편 우선 다운로드,https://www.lge.co.kr/search/result?search=MLJ32ERS,done,CK_KOR_MFL68822527_02_260904_00_OM_WEB.pdf,1차 확보 완료
+LG-031,8,주방가전 > 광파오븐,1.25,오븐,appliances/oven,.local/manuals/lg-inbox/1.25-oven,디오스 오브제컬렉션 광파오븐 39L 대용량,39L 트리플광파쿡 대용량,MLJ39ER,MLJ39EW,MLJ39,2023~2025,39L 대용량 라인 전용 매뉴얼; 미검색 시 MLJ39 자동완성 선택,https://www.lge.co.kr/search/result?search=MLJ39ER,done,CK_KOR_MFL69641709_01_260904_00_OM_WEB.pdf,1차 확보 완료
+LG-032,8,주방가전 > 광파오븐,1.25,오븐,appliances/oven,.local/manuals/lg-inbox/1.25-oven,디오스 광파오븐 32L/39L 스탠다드,기존 오브제·일반 디오스 광파오븐,ML32EW1,ML39BW,ML32,2021~2024,구세대 ML32/ML39 조작부 매뉴얼 확보용; MLJ와 다른 PDF인지 확인,https://www.lge.co.kr/search/result?search=ML32EW1,done,MWO_KOR_MFL68822502_25_250904_00_OM_WEB.pdf,1차 확보 완료
+LG-033,9,주방가전 > 전자레인지,1.30,전자렌지,appliances/microwave,.local/manuals/lg-inbox/1.30-microwave,오브제컬렉션/네오셰프 전자레인지 25L,25L 인버터 터치/ThinQ,MWJ25E,MW25S,MW25,2022~2025,MWJ25E 미검색 시 MW25S 또는 MW25 자동완성 선택,https://www.lge.co.kr/search/result?search=MWJ25E,done,MWO_KOR_MFL68822525_07_250905_00_OM_WEB.pdf,1차 확보 완료
+LG-034,9,주방가전 > 전자레인지,1.30,전자렌지,appliances/microwave,.local/manuals/lg-inbox/1.30-microwave,오브제컬렉션 전자레인지 23L 터치식,23L 글래스 터치 조작부,MWJ23EI,MW23BD,MW23,2022~2025,터치식 23L 대표 모델; 버튼식(MW23GD)과 조작부 매뉴얼 차이 확인,https://www.lge.co.kr/search/result?search=MWJ23EI,done,CK_KOR_MFL68822538_00_251209_00_OM_WEB.pdf,1차 확보 완료
+LG-035,9,주방가전 > 전자레인지,1.30,전자렌지,appliances/microwave,.local/manuals/lg-inbox/1.30-microwave,네오셰프 인버터 전자레인지 23L 버튼식,23L 버튼식 기본형,MW23GD,MW23WD,MW23,2021~2024,가장 보급량이 많은 기본형 23L; MWJ23EI와 동일 PDF면 중복PDF 체크,https://www.lge.co.kr/search/result?search=MW23GD,done,MWO_KOR_MFL68822520_22_250905_00_OM_WEB.pdf,1차 확보 완료
+LG-036,10,주방가전 > 전기레인지,1.13,레인지,appliances/range,.local/manuals/lg-inbox/1.13-range,디오스 오브제컬렉션 올인덕션 3구,인덕션 3구 표준 (BEI3),BEI3QEBLOE,BEI3QKHLOE,BEI3,2023~2025,빌트인/프리스탠딩 공용 사용설명서 확인; 설치설명서 단독 파일은 제외,https://www.lge.co.kr/search/result?search=BEI3QEBLOE,done,CK_KOR_MFL71922911_07_260629_00_OM_WEB.pdf,1차 확보 완료
+LG-037,10,주방가전 > 전기레인지,1.13,레인지,appliances/range,.local/manuals/lg-inbox/1.13-range,디오스 오브제컬렉션 인덕션 3구 와이드존,와이드/플렉스존 3구 (BEF3),BEF3ANBLE,BEF3ANHLOE,BEF3,2023~2025,와이드존 결합 조리 조작법 포함 매뉴얼; 미검색 시 BEF3 자동완성 선택,https://www.lge.co.kr/search/result?search=BEF3ANBLE,done,CK_KOR_MFL71922903_06_260626_00_OM_WEB.pdf,1차 확보 완료
+LG-038,10,주방가전 > 전기레인지,1.13,레인지,appliances/range,.local/manuals/lg-inbox/1.13-range,디오스 전기레인지 하이브리드 3구,인덕션 2구+하이라이트 1구 (BEY3),BEY3GS2E,BEY3MS,BEY3,2021~2024,하이라이트(라디언트) 화구 주의사항·조작 포함 하이브리드 전용 매뉴얼,https://www.lge.co.kr/search/result?search=BEY3GS2E,done,,1차 체크 완료
+LG-039,11,주방가전 > 정수기,1.4,정수기,appliances/water-purifier,.local/manuals/lg-inbox/1.4-water-purifier,퓨리케어 오브제컬렉션 맞춤출수 냉온정수기,데스크탑 직수 냉온 (WD520),WD520MC,WD520VC,WD520,2023~2025,색상 코드(MC/VC 등)만 다르면 동일 PDF; 필터 교체·고온살균 포함 본편 다운로드,https://www.lge.co.kr/search/result?search=WD520MC,done,WP_KOR_MFL71928104_00_260731_00_OM_WEB.pdf,1차 확보 완료
+LG-040,11,주방가전 > 정수기,1.4,정수기,appliances/water-purifier,.local/manuals/lg-inbox/1.4-water-purifier,퓨리케어 오브제컬렉션 얼음정수기,데스크탑 냉온정+제빙 (WD721),WD721RE,WD721RH,WD721,2023~2025,제빙·얼음저장고 살균 관리가 포함된 얼음정수기 전용 매뉴얼,https://www.lge.co.kr/search/result?search=WD721RE,done,WP_KOR_MFL72129601_03_250217_00_OM_WEB.pdf,1차 확보 완료
+LG-041,11,주방가전 > 정수기,1.4,정수기,appliances/water-purifier,.local/manuals/lg-inbox/1.4-water-purifier,퓨리케어 듀얼 빌트인 정수기,언더싱크 듀얼 파우셋 (WU923/WU803),WU923ACB,WU803AS,WU923,2022~2025,WU923은 냉온·WU803은 냉정 듀얼 빌트인; 클린세척수 사용법 포함 매뉴얼,https://www.lge.co.kr/search/result?search=WU923ACB,done,WP_KOR_MFL71729103_02_240416_00_OM_WEB.pdf,1차 확보 완료
+LG-042,11,주방가전 > 정수기,1.4,정수기,appliances/water-purifier,.local/manuals/lg-inbox/1.4-water-purifier,퓨리케어 오브제컬렉션 라이트온 정수전용/냉정,컴팩트 정수전용·냉정 (WD120/WD305),WD120MCB,WD305AW,WD120,2022~2025,WD120은 정수전용·WD305는 냉정수기; 둘 다 필요 시 각각 다운로드 가능,https://www.lge.co.kr/search/result?search=WD120MCB,done,WP_KOR_MFL72092301_04_260514_00_OM_WEB.pdf,1차 확보 완료
+LG-043,12,에어컨/에어케어 > 에어컨,1.3,에어컨,appliances/air-conditioner,.local/manuals/lg-inbox/1.3-air-conditioner,휘센 오브제컬렉션 스탠드 에어컨 타워 프리미엄,스탠드 타워 18평형 (2차 보완),FQ18PBNBA2,FQ18PBNBAZ,FQ18P,2021~2024,LG 매뉴얼 직행 URL 확인 완료 모델; 클릭 즉시 매뉴얼 페이지 이동,https://www.lge.co.kr/support/product-manuals?title=FQ18PBNBA2,todo,,2차 보완 모델
+LG-044,12,에어컨/에어케어 > 에어컨,1.3,에어컨,appliances/air-conditioner,.local/manuals/lg-inbox/1.3-air-conditioner,휘센 듀얼/빅토리 스탠드 에어컨,스탠드 듀얼 18평형 (2차 보완),FQ18VCDWA1,FQ18HCDWA1M,FQ18V,2021~2024,LG 매뉴얼 직행 URL 확인 완료 모델; 미검색 시 FQ18V 자동완성 선택,https://www.lge.co.kr/support/product-manuals?title=FQ18VCDWA1,todo,,2차 보완 모델
+LG-045,12,에어컨/에어케어 > 에어컨,1.3,에어컨,appliances/air-conditioner,.local/manuals/lg-inbox/1.3-air-conditioner,휘센 벽걸이 에어컨 7평형 (SQ07P),벽걸이 7평형 대표 (2차 보완),SQ07P9JWAJ,SQ07PBJWAJ,SQ07P,2021~2024,LG 매뉴얼 페이지 공식 예시 모델명; 직행 버튼 클릭 즉시 검색,https://www.lge.co.kr/support/product-manuals?title=SQ07P9JWAJ,todo,,2차 보완 모델
+LG-046,12,에어컨/에어케어 > 에어컨,1.3,에어컨,appliances/air-conditioner,.local/manuals/lg-inbox/1.3-air-conditioner,휘센 오브제컬렉션 엣지 창호형 에어컨,창호형 5평형 (2차 보완),WQ05DCWCS,WQ05DDWCS,WQ05D,2022~2024,LG 매뉴얼 직행 클릭 또는 '창호형 에어컨' 카테고리에서 WQ05D 자동완성 선택,https://www.lge.co.kr/support/product-manuals?title=WQ05DCWCS,todo,,2차 보완 모델
+LG-047,12,에어컨/에어케어 > 에어컨,1.3,에어컨,appliances/air-conditioner,.local/manuals/lg-inbox/1.3-air-conditioner,휘센 오브제컬렉션 이동식 에어컨,이동식 8평형 (2차 보완),PQ08DAWBS,PQ08DBWAS,PQ08D,2022~2024,LG 매뉴얼 직행 URL 확인 완료 모델; 클릭 즉시 매뉴얼 페이지 이동,https://www.lge.co.kr/support/product-manuals?title=PQ08DAWBS,todo,,2차 보완 모델
+LG-048,13,에어컨/에어케어 > 공기청정기,1.7,공기 청정기,appliances/air-purifier,.local/manuals/lg-inbox/1.7-air-purifier,퓨리케어 360° 공기청정기 플러스/알파 대용량,대용량 30~35평형 2단 (2차 보완),AS301DWFA,AS351GW30,AS301,2021~2024,LG 매뉴얼 직행 클릭 또는 AS301/AS351 자동완성 선택,https://www.lge.co.kr/support/product-manuals?title=AS301DWFA,todo,,2차 보완 모델
+LG-049,13,에어컨/에어케어 > 공기청정기,1.7,공기 청정기,appliances/air-purifier,.local/manuals/lg-inbox/1.7-air-purifier,퓨리케어 360° 공기청정기 히트/플러스,표준 18~19평형 1단 (AS183/AS193),AS183HWWA,AS193DWFAM,AS183,2022~2025,1단 보급·표준형 퓨리케어 360° 매뉴얼,https://www.lge.co.kr/search/result?search=AS183HWWA,done,360Hit_KOR_MFL72146412_00_241016_00_WEB.pdf,1차 확보 완료
+LG-050,13,에어컨/에어케어 > 공기청정기,1.7,공기 청정기,appliances/air-purifier,.local/manuals/lg-inbox/1.7-air-purifier,퓨리케어 오브제컬렉션 에어로타워,공기청정+온풍/선풍 타워형 (FS062/FS061),FS062PZGA,FS061PSSA,FS062,2022~2025,공기청정기 또는 에어로타워 하위 메뉴에서 FS062/FS061 검색,https://www.lge.co.kr/search/result?search=FS062PZGA,done,MFL71825201_08_220701_03_PRINT(CROP).pdf,1차 확보 완료
+LG-051,13,에어컨/에어케어 > 공기청정기,1.7,공기 청정기,appliances/air-purifier,.local/manuals/lg-inbox/1.7-air-purifier,퓨리케어 오브제컬렉션 에어로퍼니처,테이블형 공기청정기 (AS065/AS062),AS065PWHA,AS062PWHAR,AS065,2023~2025,상단 무선충전·무드조명 기능 포함 테이블형 전용 매뉴얼,https://www.lge.co.kr/search/result?search=AS065PWHA,done,____MFL71953018_00_250306_03.pdf,1차 확보 완료
+LG-052,13,에어컨/에어케어 > 공기청정기,1.7,공기 청정기,appliances/air-purifier,.local/manuals/lg-inbox/1.7-air-purifier,퓨리케어 오브제컬렉션 에어로부스터,슬림 타워 15평형 멀티청정 (AS155),AS155GWDL,AS155G,AS155,2024~2025,단일 대표 컬러(에센스 화이트) 모델; 미검색 시 AS155 자동완성 선택,https://www.lge.co.kr/search/result?search=AS155GWDL,done,GP1_KOR_MFL71891993_01_250319_01_WEB_________________.pdf,1차 확보 완료
+LG-053,14,에어컨/에어케어 > 제습기,1.32,제습기,appliances/dehumidifier,.local/manuals/lg-inbox/1.32-dehumidifier,휘센 오브제컬렉션 제습기 대용량 20~21L,대용량 21L/20L (DQ214/DQ203),DQ214MWGA,DQ203PECA,DQ214,2023~2025,2024년형 DQ214(히든디스플레이)와 2023년형 DQ203 중 검색되는 최신 본편 다운로드,https://www.lge.co.kr/search/result?search=DQ214MWGA,done,KOR_MFL71891994_03_250325_00_OM_WEB.pdf,1차 확보 완료
+LG-054,14,에어컨/에어케어 > 제습기,1.32,제습기,appliances/dehumidifier,.local/manuals/lg-inbox/1.32-dehumidifier,휘센 오브제컬렉션 제습기 중용량 15~16L,중용량 15L/16L (DQ154/DQ163),DQ154MWGA,DQ163PECA,DQ154,2023~2025,DQ214와 동일 공용 PDF라면 중복PDF 표시 후 DQ163PECA(구형) 확인,https://www.lge.co.kr/search/result?search=DQ154MWGA,duplicate,KOR_MFL71891994_03_250325_00_OM_WEB.pdf,LG-053과 공용 PDF 중복
+LG-055,14,에어컨/에어케어 > 제습기,1.32,제습기,appliances/dehumidifier,.local/manuals/lg-inbox/1.32-dehumidifier,휘센 오브제컬렉션 제습기 컴팩트 13L,소형 13L (DQ134/DQ132),DQ134MWEC,DQ132PWXC,DQ134,2022~2024,소형 13L 전용; 상위 용량과 PDF 중복 여부 확인 후 저장,https://www.lge.co.kr/search/result?search=DQ134MWEC,duplicate,KOR_MFL71891994_03_250325_00_OM_WEB.pdf,LG-053과 공용 PDF 중복
+LG-056,15,생활가전 > 청소기,1.5,진공 청소기,appliances/vacuum,.local/manuals/lg-inbox/1.5-vacuum,코드제로 A9S 무선청소기 (A9700),무선 스틱 프리미엄 (2차 보완),A9700IK,A9700SK,A9700,2021~2024,LG 매뉴얼 직행 클릭 또는 '무선청소기' 카테고리에서 A9700 검색,https://www.lge.co.kr/support/product-manuals?title=A9700IK,todo,,2차 보완 모델
+LG-057,15,생활가전 > 청소기,1.5,진공 청소기,appliances/vacuum,.local/manuals/lg-inbox/1.5-vacuum,코드제로 A9S / 올인원타워 (A9570/AT9200),무선 스틱 표준·올인원 (2차 보완),A9570IK,AT9200,A9570,2021~2024,A9700IK와 다른 매뉴얼이거나 올인원타워(AT9200) 매뉴얼 확보용,https://www.lge.co.kr/support/product-manuals?title=A9570IK,todo,,2차 보완 모델
+LG-058,15,생활가전 > 청소기,1.5,진공 청소기,appliances/vacuum,.local/manuals/lg-inbox/1.5-vacuum,코드제로 R9 / M9 로봇청소기,AI 흡입·물걸레 로봇청소기 (2차 보완),R958SA,M970S,R958,2021~2024,R958SA(흡입)·M970S(물걸레전용) 서로 다른 플랫폼 매뉴얼; 둘 다 확보 권장,https://www.lge.co.kr/support/product-manuals?title=R958SA,todo,,2차 보완 모델
+LG-059,15,생활가전 > 청소기,1.5,진공 청소기,appliances/vacuum,.local/manuals/lg-inbox/1.5-vacuum,코드제로 R5 로봇청소기,흡입·물걸레 겸용 보급형 로봇청소기,R585WKA,R585HGH,R585,2022~2024,로보킹(B95)과 완전히 다른 R5 플랫폼 전용 매뉴얼 확보 대상,https://www.lge.co.kr/search/result?search=R585WKA,done,VC_KOR_MFL71751912_06_260310_00_OM_WEB.pdf,1차 확보 완료
+  </script>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const STORAGE_KEY = "seraph.lg_manual_helper.state.v2";
+      const ROOT_STORAGE_KEY = "seraph.lg_manual_helper.repo_root.v1";
+
+      const CSV_HEADERS = [
+        "id",
+        "lg_group_order",
+        "lg_category_path",
+        "seraph_category_no",
+        "seraph_category_name",
+        "seraph_slug_path",
+        "inbox_folder",
+        "series_name",
+        "form_factor",
+        "primary_model",
+        "fallback_model",
+        "autocomplete_prefix",
+        "release_window",
+        "search_tip",
+        "source_ref_url",
+        "status",
+        "downloaded_file",
+        "note"
+      ];
+
+      const STATUS_LABELS = {
+        todo: "미작업",
+        done: "완료",
+        fallback_done: "대체코드성공",
+        duplicate: "중복PDF",
+        not_found: "미검색"
+      };
+
+      let rows = [];
+      let activeCategoryNo = "ALL";
+      let activeStatusFilter = "todo";
+      let searchQuery = "";
+      let toastTimer = null;
+
+      function stripBom(text) {
+        return text.charCodeAt(0) === 0xfeff ? text.slice(1) : text;
+      }
+
+      function parseCsv(text) {
+        const clean = stripBom(text).trim();
+        if (!clean) return [];
+        const matrix = [];
+        let row = [];
+        let field = "";
+        let inQuotes = false;
+
+        for (let i = 0; i < clean.length; i += 1) {
+          const ch = clean[i];
+          if (inQuotes) {
+            if (ch === '"') {
+              if (clean[i + 1] === '"') {
+                field += '"';
+                i += 1;
+              } else {
+                inQuotes = false;
+              }
+            } else {
+              field += ch;
+            }
+          } else if (ch === '"') {
+            inQuotes = true;
+          } else if (ch === ",") {
+            row.push(field);
+            field = "";
+          } else if (ch === "\r") {
+            if (clean[i + 1] === "\n") i += 1;
+            row.push(field);
+            matrix.push(row);
+            row = [];
+            field = "";
+          } else if (ch === "\n") {
+            row.push(field);
+            matrix.push(row);
+            row = [];
+            field = "";
+          } else {
+            field += ch;
+          }
+        }
+        row.push(field);
+        matrix.push(row);
+
+        const header = matrix[0].map((h) => h.trim());
+        return matrix
+          .slice(1)
+          .filter((cols) => cols.some((c) => c.trim() !== ""))
+          .map((cols) => {
+            const obj = {};
+            header.forEach((key, idx) => {
+              obj[key] = (cols[idx] ?? "").trim();
+            });
+            if (!STATUS_LABELS[obj.status]) {
+              obj.status = "todo";
+            }
+            return obj;
+          });
+      }
+
+      function escapeCsvCell(value) {
+        const str = String(value ?? "");
+        if (/[",\r\n]/.test(str)) {
+          return '"' + str.replace(/"/g, '""') + '"';
+        }
+        return str;
+      }
+
+      function serializeCsv(items) {
+        const lines = [CSV_HEADERS.join(",")];
+        items.forEach((item) => {
+          lines.push(CSV_HEADERS.map((h) => escapeCsvCell(item[h] ?? "")).join(","));
+        });
+        return "\ufeff" + lines.join("\n") + "\n";
+      }
+
+      function detectDefaultRepoRoot() {
+        const saved = localStorage.getItem(ROOT_STORAGE_KEY);
+        if (saved) return saved;
+        if (window.location.protocol === "file:") {
+          const decodedPath = decodeURIComponent(window.location.pathname);
+          const match = decodedPath.match(/^(.*)\/tools\/manual-helper\/[^/]+$/);
+          if (match && match[1]) {
+            return match[1];
+          }
+        }
+        return "";
+      }
+
+      function getAbsoluteInboxPath(relativeInboxFolder) {
+        const root = (document.getElementById("repoRootInput").value || "").trim().replace(/\/+$/, "");
+        const rel = (relativeInboxFolder || "").replace(/^\/+/, "");
+        return root ? root + "/" + rel : rel;
+      }
+
+      function loadSavedState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          return raw ? JSON.parse(raw) : {};
+        } catch {
+          return {};
+        }
+      }
+
+      function persistState() {
+        const stateMap = {};
+        rows.forEach((r) => {
+          stateMap[r.id] = {
+            status: r.status,
+            downloaded_file: r.downloaded_file,
+            note: r.note
+          };
+        });
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(stateMap));
+          const now = new Date();
+          const hh = String(now.getHours()).padStart(2, "0");
+          const mm = String(now.getMinutes()).padStart(2, "0");
+          const ss = String(now.getSeconds()).padStart(2, "0");
+          document.getElementById("saveMeta").textContent = "자동 저장됨 (" + hh + ":" + mm + ":" + ss + ")";
+        } catch {
+          document.getElementById("saveMeta").textContent = "브라우저 저장소 사용 불가 (CSV 내보내기로 백업하세요)";
+        }
+      }
+
+      function mergeSavedState(parsedRows) {
+        const saved = loadSavedState();
+        return parsedRows.map((r) => {
+          const patch = saved[r.id];
+          if (!patch) return r;
+          return {
+            ...r,
+            status: STATUS_LABELS[patch.status] ? patch.status : r.status,
+            downloaded_file: patch.downloaded_file ?? r.downloaded_file,
+            note: patch.note ?? r.note
+          };
+        });
+      }
+
+      function showToast(message) {
+        const el = document.getElementById("toast");
+        el.textContent = message;
+        el.classList.add("show");
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          el.classList.remove("show");
+        }, 1800);
+      }
+
+      async function copyText(text, triggerBtn) {
+        if (!text) return;
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(text);
+          } else {
+            throw new Error("fallback");
+          }
+        } catch {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          document.body.removeChild(ta);
+        }
+
+        if (triggerBtn) {
+          triggerBtn.classList.add("copied");
+          setTimeout(() => triggerBtn.classList.remove("copied"), 900);
+        }
+        showToast("복사됨: " + text);
+      }
+
+      function isProcessed(status) {
+        return status === "done" || status === "fallback_done" || status === "duplicate";
+      }
+
+      function renderStats() {
+        const total = rows.length;
+        const done = rows.filter((r) => r.status === "done").length;
+        const fallback = rows.filter((r) => r.status === "fallback_done").length;
+        const dup = rows.filter((r) => r.status === "duplicate").length;
+        const notFound = rows.filter((r) => r.status === "not_found").length;
+        const todo = rows.filter((r) => r.status === "todo").length;
+        const processed = done + fallback + dup;
+        const pct = total ? Math.round((processed / total) * 100) : 0;
+
+        document.getElementById("progressFill").style.width = pct + "%";
+        const statsRow = document.getElementById("statsRow");
+        statsRow.innerHTML = "";
+
+        const pills = [
+          { text: "진행률 " + pct + "% (" + processed + "/" + total + ")", cls: "" },
+          { text: "완료 " + done, cls: "ok" },
+          { text: "대체성공 " + fallback, cls: "info" },
+          { text: "중복PDF " + dup, cls: "warn" },
+          { text: "미검색 " + notFound, cls: "danger" },
+          { text: "남음 " + todo, cls: "" }
+        ];
+
+        pills.forEach((p) => {
+          const span = document.createElement("span");
+          span.className = "stat-pill" + (p.cls ? " " + p.cls : "");
+          span.textContent = p.text;
+          statsRow.appendChild(span);
+        });
+      }
+
+      function renderCategoryChips() {
+        const container = document.getElementById("categoryChips");
+        container.innerHTML = "";
+
+        const groups = new Map();
+        rows.forEach((r) => {
+          const key = r.seraph_category_no;
+          if (!groups.has(key)) {
+            groups.set(key, {
+              order: Number(r.lg_group_order) || 999,
+              no: r.seraph_category_no,
+              name: r.seraph_category_name,
+              total: 0,
+              processed: 0
+            });
+          }
+          const g = groups.get(key);
+          g.total += 1;
+          if (isProcessed(r.status)) g.processed += 1;
+        });
+
+        const totalProcessed = rows.filter((r) => isProcessed(r.status)).length;
+        const allChip = document.createElement("button");
+        allChip.type = "button";
+        allChip.className = "chip" + (activeCategoryNo === "ALL" ? " active" : "");
+        allChip.innerHTML =
+          '<span>전체 15개군</span><span class="count">' +
+          totalProcessed +
+          "/" +
+          rows.length +
+          "</span>";
+        allChip.addEventListener("click", () => {
+          activeCategoryNo = "ALL";
+          render();
+        });
+        container.appendChild(allChip);
+
+        Array.from(groups.values())
+          .sort((a, b) => a.order - b.order)
+          .forEach((g) => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            const isComplete = g.total > 0 && g.processed === g.total;
+            btn.className =
+              "chip" +
+              (activeCategoryNo === g.no ? " active" : "") +
+              (isComplete ? " completed" : "");
+            btn.innerHTML =
+              "<span>" +
+              escapeHtml(g.no + " " + g.name) +
+              '</span><span class="count">' +
+              g.processed +
+              "/" +
+              g.total +
+              "</span>";
+            btn.addEventListener("click", () => {
+              activeCategoryNo = g.no;
+              render();
+            });
+            container.appendChild(btn);
+          });
+      }
+
+      function escapeHtml(str) {
+        return String(str ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function matchesFilters(r) {
+        if (activeCategoryNo !== "ALL" && r.seraph_category_no !== activeCategoryNo) {
+          return false;
+        }
+        if (activeStatusFilter === "todo" && r.status !== "todo") return false;
+        if (activeStatusFilter === "completed" && r.status !== "done" && r.status !== "fallback_done") return false;
+        if (activeStatusFilter === "duplicate" && r.status !== "duplicate") return false;
+        if (activeStatusFilter === "not_found" && r.status !== "not_found") return false;
+
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          const haystack = [
+            r.id,
+            r.lg_category_path,
+            r.seraph_category_no,
+            r.seraph_category_name,
+            r.series_name,
+            r.form_factor,
+            r.primary_model,
+            r.fallback_model,
+            r.autocomplete_prefix,
+            r.search_tip,
+            r.downloaded_file,
+            r.note
+          ]
+            .join(" ")
+            .toLowerCase();
+          if (!haystack.includes(q)) return false;
+        }
+        return true;
+      }
+
+      function renderRows() {
+        const content = document.getElementById("contentArea");
+        content.innerHTML = "";
+
+        const filtered = rows.filter(matchesFilters);
+        if (filtered.length === 0) {
+          const empty = document.createElement("div");
+          empty.className = "empty-state";
+          empty.textContent = "현재 필터 조건에 해당하는 모델이 없습니다.";
+          content.appendChild(empty);
+          return;
+        }
+
+        const grouped = new Map();
+        filtered.forEach((r) => {
+          const key = r.seraph_category_no;
+          if (!grouped.has(key)) {
+            grouped.set(key, {
+              order: Number(r.lg_group_order) || 999,
+              no: r.seraph_category_no,
+              name: r.seraph_category_name,
+              slug: r.seraph_slug_path,
+              inbox: r.inbox_folder,
+              items: []
+            });
+          }
+          grouped.get(key).items.push(r);
+        });
+
+        Array.from(grouped.values())
+          .sort((a, b) => a.order - b.order)
+          .forEach((group) => {
+            const section = document.createElement("section");
+            section.className = "group-card";
+
+            const uniqueLgPaths = Array.from(new Set(group.items.map((i) => i.lg_category_path)));
+            const header = document.createElement("div");
+            header.className = "group-header";
+
+            const titleDiv = document.createElement("div");
+            titleDiv.className = "group-title";
+            titleDiv.innerHTML =
+              '<span class="seraph-tag">' +
+              escapeHtml(group.no + " " + group.name) +
+              '</span><span class="slug-code">' +
+              escapeHtml(group.slug) +
+              "</span>" +
+              uniqueLgPaths
+                .map((p) => '<span class="lg-path-badge">LG: ' + escapeHtml(p) + "</span>")
+                .join("");
+
+            const folderBtn = document.createElement("button");
+            folderBtn.type = "button";
+            folderBtn.className = "folder-btn";
+            folderBtn.title = "클릭하면 macOS Cmd+Shift+G용 폴더 경로가 복사됩니다";
+            folderBtn.textContent = "📁 " + group.inbox + " 복사";
+            folderBtn.addEventListener("click", () => {
+              copyText(getAbsoluteInboxPath(group.inbox), folderBtn);
+            });
+
+            header.appendChild(titleDiv);
+            header.appendChild(folderBtn);
+            section.appendChild(header);
+
+            const listDiv = document.createElement("div");
+            listDiv.className = "model-list";
+
+            group.items.forEach((item) => {
+              const rowEl = document.createElement("div");
+              rowEl.className =
+                "model-row" +
+                (item.status === "done" || item.status === "fallback_done" ? " is-done" : "") +
+                (item.status === "duplicate" ? " is-duplicate" : "") +
+                (item.status === "not_found" ? " is-not-found" : "");
+
+              // Column 1: Info
+              const infoCol = document.createElement("div");
+              infoCol.innerHTML =
+                '<div class="meta-top">' +
+                '<span class="row-id">' + escapeHtml(item.id) + "</span>" +
+                '<span class="series-name">' + escapeHtml(item.series_name) + "</span>" +
+                "</div>" +
+                '<div class="sub-meta">' +
+                '<span class="mini-tag">' + escapeHtml(item.form_factor) + "</span>" +
+                '<span class="mini-tag">' + escapeHtml(item.release_window) + "</span>" +
+                '<span class="mini-tag">' + escapeHtml(item.lg_category_path) + "</span>" +
+                (item.source_ref_url
+                  ? '<a class="ext-link" href="' +
+                    escapeHtml(item.source_ref_url) +
+                    '" target="_blank" rel="noopener noreferrer">공식검색 ↗</a>'
+                  : "") +
+                "</div>" +
+                (item.search_tip
+                  ? '<div class="tip-text">💡 ' + escapeHtml(item.search_tip) + "</div>"
+                  : "");
+
+              // Column 2: Copy buttons
+              const copyCol = document.createElement("div");
+              copyCol.className = "copy-stack";
+
+              const primaryBtn = document.createElement("button");
+              primaryBtn.type = "button";
+              primaryBtn.className = "copy-primary";
+              primaryBtn.innerHTML =
+                "<span>" +
+                escapeHtml(item.primary_model) +
+                '</span><span class="copy-label">주 모델명 복사</span>';
+              primaryBtn.addEventListener("click", () => copyText(item.primary_model, primaryBtn));
+
+              const subRow = document.createElement("div");
+              subRow.className = "copy-sub-row";
+
+              const fallbackBtn = document.createElement("button");
+              fallbackBtn.type = "button";
+              fallbackBtn.className = "copy-secondary";
+              fallbackBtn.innerHTML =
+                '<span class="copy-sub-tag">대체</span><span>' +
+                escapeHtml(item.fallback_model) +
+                "</span>";
+              fallbackBtn.addEventListener("click", () => copyText(item.fallback_model, fallbackBtn));
+
+              const prefixBtn = document.createElement("button");
+              prefixBtn.type = "button";
+              prefixBtn.className = "copy-secondary";
+              prefixBtn.innerHTML =
+                '<span class="copy-sub-tag">접두어</span><span>' +
+                escapeHtml(item.autocomplete_prefix) +
+                "</span>";
+              prefixBtn.addEventListener("click", () => copyText(item.autocomplete_prefix, prefixBtn));
+
+              subRow.appendChild(fallbackBtn);
+              subRow.appendChild(prefixBtn);
+              copyCol.appendChild(primaryBtn);
+              copyCol.appendChild(subRow);
+
+              // Column 3: Status & notes
+              const statusCol = document.createElement("div");
+              statusCol.className = "status-col";
+
+              const actionRow = document.createElement("div");
+              actionRow.className = "status-action-row";
+
+              const select = document.createElement("select");
+              select.className = "status-select";
+              select.setAttribute("aria-label", item.id + " 상태");
+              Object.entries(STATUS_LABELS).forEach(([val, label]) => {
+                const opt = document.createElement("option");
+                opt.value = val;
+                opt.textContent = label;
+                if (item.status === val) opt.selected = true;
+                select.appendChild(opt);
+              });
+              select.addEventListener("change", () => {
+                item.status = select.value;
+                persistState();
+                render();
+              });
+
+              const quickDoneBtn = document.createElement("button");
+              quickDoneBtn.type = "button";
+              const isDone = item.status === "done";
+              quickDoneBtn.className = "quick-done-btn" + (isDone ? " active" : "");
+              quickDoneBtn.textContent = isDone ? "✓ 완료됨" : "✓ 완료";
+              quickDoneBtn.addEventListener("click", () => {
+                item.status = item.status === "done" ? "todo" : "done";
+                persistState();
+                render();
+              });
+
+              actionRow.appendChild(select);
+              actionRow.appendChild(quickDoneBtn);
+
+              const fileInput = document.createElement("input");
+              fileInput.type = "text";
+              fileInput.className = "note-input";
+              fileInput.placeholder = "저장 파일명 메모 (선택, 예: MFL71892301.pdf)";
+              fileInput.value = item.downloaded_file || "";
+              fileInput.addEventListener("input", () => {
+                item.downloaded_file = fileInput.value;
+                persistState();
+              });
+
+              const noteInput = document.createElement("input");
+              noteInput.type = "text";
+              noteInput.className = "note-input";
+              noteInput.placeholder = "비고 (중복 사유, 대체코드 성공 기록 등)";
+              noteInput.value = item.note || "";
+              noteInput.addEventListener("input", () => {
+                item.note = noteInput.value;
+                persistState();
+              });
+
+              statusCol.appendChild(actionRow);
+              statusCol.appendChild(fileInput);
+              statusCol.appendChild(noteInput);
+
+              rowEl.appendChild(infoCol);
+              rowEl.appendChild(copyCol);
+              rowEl.appendChild(statusCol);
+              listDiv.appendChild(rowEl);
+            });
+
+            section.appendChild(listDiv);
+            content.appendChild(section);
+          });
+      }
+
+      function render() {
+        renderStats();
+        renderCategoryChips();
+        renderRows();
+      }
+
+      function init() {
+        const embeddedText = document.getElementById("embedded-csv").textContent;
+        rows = mergeSavedState(parseCsv(embeddedText));
+
+        const rootInput = document.getElementById("repoRootInput");
+        rootInput.value = detectDefaultRepoRoot();
+        rootInput.addEventListener("input", () => {
+          localStorage.setItem(ROOT_STORAGE_KEY, rootInput.value.trim());
+        });
+
+        document.getElementById("toggleGuideBtn").addEventListener("click", () => {
+          document.getElementById("guideBox").classList.toggle("open");
+        });
+
+        document.getElementById("searchInput").addEventListener("input", (e) => {
+          searchQuery = e.target.value.trim();
+          renderRows();
+        });
+
+        document.querySelectorAll(".status-tab").forEach((tab) => {
+          tab.addEventListener("click", () => {
+            document.querySelectorAll(".status-tab").forEach((t) => t.classList.remove("active"));
+            tab.classList.add("active");
+            activeStatusFilter = tab.dataset.status;
+            renderRows();
+          });
+        });
+
+        document.getElementById("exportCsvBtn").addEventListener("click", () => {
+          const csvContent = serializeCsv(rows);
+          const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          const d = new Date();
+          const stamp =
+            d.getFullYear() +
+            String(d.getMonth() + 1).padStart(2, "0") +
+            String(d.getDate()).padStart(2, "0");
+          a.href = url;
+          a.download = "lg-appliance-models-progress-" + stamp + ".csv";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          showToast("진행결과 CSV를 내보냈습니다.");
+        });
+
+        const fileInput = document.getElementById("csvFileInput");
+        document.getElementById("importCsvBtn").addEventListener("click", () => {
+          fileInput.value = "";
+          fileInput.click();
+        });
+
+        fileInput.addEventListener("change", async (e) => {
+          const file = e.target.files && e.target.files[0];
+          if (!file) return;
+          const text = await file.text();
+          const imported = parseCsv(text);
+          if (!imported.length || !imported[0].primary_model) {
+            showToast("유효한 LG 모델 CSV 형식이 아닙니다.");
+            return;
+          }
+          rows = imported;
+          persistState();
+          activeCategoryNo = "ALL";
+          render();
+          showToast("CSV " + rows.length + "건을 불러왔습니다.");
+        });
+
+        document.getElementById("resetBtn").addEventListener("click", () => {
+          if (!window.confirm("저장된 완료 체크와 메모를 모두 초기화할까요?")) return;
+          localStorage.removeItem(STORAGE_KEY);
+          rows = parseCsv(document.getElementById("embedded-csv").textContent);
+          render();
+          showToast("진행 상태를 초기화했습니다.");
+        });
+
+        render();
+      }
+
+      document.addEventListener("DOMContentLoaded", init);
+    })();
+  </script>
+</body>
+</html>
