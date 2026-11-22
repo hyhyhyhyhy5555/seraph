@@ -1,7 +1,8 @@
 import { Tabs } from "expo-router";
+import { useState } from "react";
 import { Platform, StyleSheet, View, useWindowDimensions } from "react-native";
 
-import { Icon, type IconName } from "@/components/ui";
+import { Icon, IconButton, type IconName } from "@/components/ui";
 import { colors } from "@/theme/colors";
 import { radii, sizes } from "@/theme/tokens";
 import { getLayoutTier } from "@/theme/responsive";
@@ -29,10 +30,12 @@ export default function TabsLayout() {
   const tier = getLayoutTier(width);
   const isWideWeb = Platform.OS === "web" && tier === "desktop";
   const isCompact = tier === "compact";
+  const [isRailCollapsed, setIsRailCollapsed] = useState(false);
 
   return (
-    <Tabs
-      screenOptions={{
+    <View style={styles.shell}>
+      <Tabs
+        screenOptions={{
         headerShown: false,
         tabBarPosition: isWideWeb ? "left" : "bottom",
         tabBarActiveTintColor: colors.primary,
@@ -40,11 +43,12 @@ export default function TabsLayout() {
         tabBarInactiveBackgroundColor: "transparent",
         tabBarInactiveTintColor: colors.textTertiary,
         tabBarHideOnKeyboard: true,
+        tabBarShowLabel: !isWideWeb || !isRailCollapsed,
         tabBarLabelStyle: styles.label,
-        tabBarStyle: [styles.tabBar, isCompact && styles.tabBarCompact, isWideWeb && styles.tabBarWide],
+        tabBarStyle: [styles.tabBar, isCompact && styles.tabBarCompact, isWideWeb && styles.tabBarWide, isWideWeb && isRailCollapsed && styles.tabBarCollapsed],
         tabBarItemStyle: [styles.tabItem, isWideWeb && styles.tabItemWide]
       }}
-    >
+      >
       <Tabs.Screen
         name="index"
         options={{
@@ -79,11 +83,33 @@ export default function TabsLayout() {
           )
         }}
       />
-    </Tabs>
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: "설정",
+          tabBarAccessibilityLabel: "설정 탭",
+          tabBarIcon: ({ focused }) => (
+            <TabIcon focused={focused} name="settings-outline" focusedName="settings" />
+          )
+        }}
+      />
+      </Tabs>
+      {isWideWeb ? (
+        <View style={[styles.railToggle, isRailCollapsed && styles.railToggleCollapsed]}>
+          <IconButton
+            accessibilityLabel={isRailCollapsed ? "메뉴 펼치기" : "메뉴 접기"}
+            icon={isRailCollapsed ? "menu" : "close"}
+            onPress={() => setIsRailCollapsed((current) => !current)}
+            variant="soft"
+          />
+        </View>
+      ) : null}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  shell: { flex: 1 },
   tabBar: {
     backgroundColor: colors.surface,
     borderTopColor: colors.border,
@@ -105,9 +131,10 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     height: "100%",
     paddingHorizontal: 14,
-    paddingTop: 32,
+    paddingTop: 92,
     width: sizes.navigationRail
   },
+  tabBarCollapsed: { paddingHorizontal: 8, width: 84 },
   tabItemWide: {
     borderRadius: radii.md,
     maxHeight: 64,
@@ -127,5 +154,7 @@ const styles = StyleSheet.create({
   },
   iconFrameFocused: {
     backgroundColor: colors.signal
-  }
+  },
+  railToggle: { left: 18, position: "absolute", top: 24, zIndex: 20 },
+  railToggleCollapsed: { left: 20 }
 });

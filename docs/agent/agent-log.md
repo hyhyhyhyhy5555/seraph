@@ -143,3 +143,9 @@
 
 - `app.json`의 `userInterfaceStyle`을 `automatic`으로 전환하고 iOS(`DynamicColorIOS`)·Android(`PlatformColor`)·웹 CSS 변수(`--seraph-*`) 기반의 라이트/다크 색상 토큰을 구성했습니다.
 - `@react-native-async-storage/async-storage`와 `ThemeProvider`를 추가해 시스템·라이트·다크 화면 모드 설정을 기기와 웹에서 유지·반영하도록 연결했습니다.
+
+### FE 랜딩·설정·접이식 내비게이션
+
+- 최초 실행(앱 1회, 웹 30일 미방문 시)에 `/landing`으로 안내하는 랜딩 화면과 실행 기록 저장(`launchPreferences`)을 추가하고 실시간 라이브러리 통계를 연결했습니다.
+- 화면 모드 전환과 랜딩 페이지 재진입을 제공하는 `설정` 탭을 추가하고, 데스크톱 웹 좌측 내비게이션 레일의 접기/펼치기 토글을 구현했습니다.
+- 앱·백엔드 TypeScript 검사, 웹 정적 export·백엔드 빌드, 프로덕션 의존성 감사 및 Expo Doctor 20/20을 통과했습니다.
