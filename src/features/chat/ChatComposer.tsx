@@ -29,7 +29,7 @@ export function ChatComposer({ disabled, onChangeText, onSend, value }: ChatComp
         }
         multiline
         onChangeText={onChangeText}
-        placeholder="제품명이나 증상을 질문해보세요"
+        placeholder="기기나 증상을 자유롭게 질문해보세요"
         returnKeyType="send"
         value={value}
       />

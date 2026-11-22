@@ -1,10 +1,10 @@
 import { Tabs } from "expo-router";
-import { useEffect, useState } from "react";
 import { Platform, StyleSheet, View, useWindowDimensions } from "react-native";
 
 import { Icon, type IconName } from "@/components/ui";
 import { colors } from "@/theme/colors";
 import { radii, sizes } from "@/theme/tokens";
+import { getLayoutTier } from "@/theme/responsive";
 
 type TabIconProps = {
   focused: boolean;
@@ -26,11 +26,9 @@ function TabIcon({ focused, focusedName, name }: TabIconProps) {
 
 export default function TabsLayout() {
   const { width } = useWindowDimensions();
-  const [isWideWeb, setIsWideWeb] = useState(false);
-
-  useEffect(() => {
-    setIsWideWeb(Platform.OS === "web" && width >= 960);
-  }, [width]);
+  const tier = getLayoutTier(width);
+  const isWideWeb = Platform.OS === "web" && tier === "desktop";
+  const isCompact = tier === "compact";
 
   return (
     <Tabs
@@ -43,7 +41,7 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: colors.textTertiary,
         tabBarHideOnKeyboard: true,
         tabBarLabelStyle: styles.label,
-        tabBarStyle: [styles.tabBar, isWideWeb && styles.tabBarWide],
+        tabBarStyle: [styles.tabBar, isCompact && styles.tabBarCompact, isWideWeb && styles.tabBarWide],
         tabBarItemStyle: [styles.tabItem, isWideWeb && styles.tabItemWide]
       }}
     >
@@ -96,6 +94,11 @@ const styles = StyleSheet.create({
   tabItem: {
     paddingVertical: 3
   },
+  tabBarCompact: {
+    height: 68,
+    paddingBottom: 7,
+    paddingTop: 5
+  },
   tabBarWide: {
     borderRightColor: colors.border,
     borderRightWidth: 1,
@@ -111,8 +114,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10
   },
   label: {
+    fontFamily: "PretendardSemiBold",
     fontSize: 12,
-    fontWeight: "700",
     marginTop: 3
   },
   iconFrame: {

@@ -27,6 +27,7 @@ type AskResponse = {
 export async function askManualQuestion(params: {
   question: string;
   sessionId?: string;
+  manualId?: string;
 }) {
   const response = await fetch(`${API_URL}/api/chat/ask`, {
     method: "POST",
@@ -43,4 +44,46 @@ export async function askManualQuestion(params: {
 
   const payload = (await response.json()) as AskResponse;
   return payload.data;
+}
+
+export type Category = {
+  id: string;
+  name: string;
+  slugPath: string;
+  manualCount: number;
+  children: Category[];
+};
+
+export type ManualSummary = {
+  id: string;
+  title: string;
+  modelName: string | null;
+  category: { id: string; name: string; slugPath: string };
+  manufacturer: { id: string; name: string; slug: string } | null;
+};
+
+export type LibraryStats = {
+  manualCount: number;
+  chunkCount: number;
+  embeddedChunkCount: number;
+  categoryCount: number;
+};
+
+async function getData<T>(path: string): Promise<T> {
+  const response = await fetch(`${API_URL}${path}`);
+  if (!response.ok) throw new Error(await response.text());
+  const payload = (await response.json()) as { data: T };
+  return payload.data;
+}
+
+export function getCategories() {
+  return getData<Category[]>("/api/categories");
+}
+
+export function getManuals(categoryId: string) {
+  return getData<ManualSummary[]>(`/api/manuals?categoryId=${encodeURIComponent(categoryId)}&limit=20`);
+}
+
+export function getLibraryStats() {
+  return getData<LibraryStats>("/api/library-stats");
 }

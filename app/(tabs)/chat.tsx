@@ -1,28 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 
 import { Badge, Button, Screen, ScreenHeader, Text } from "@/components/ui";
-import { ChatComposer, ChatMessageList, type ChatMessage } from "@/features/chat";
-import { askManualQuestion } from "@/lib/api";
+import { ChatComposer, ChatMessageList, DeviceIntake, type ChatMessage } from "@/features/chat";
+import { askManualQuestion, getLibraryStats, type ManualSummary } from "@/lib/api";
 
-const initialMessages: ChatMessage[] = [
-  {
-    id: "assistant-welcome",
-    role: "assistant",
-    text: "제품명이나 증상을 알려주시면 등록된 설명서에서 근거를 찾아드릴게요."
-  },
-  {
-    id: "assistant-example",
-    role: "assistant",
-    text: "예: 삼성 세탁기 4C 오류는 어떻게 해결해?"
-  }
-];
+const initialMessages: ChatMessage[] = [];
 
 export default function ChatScreen() {
   const [messages, setMessages] = useState(initialMessages);
   const [input, setInput] = useState("");
   const [sessionId, setSessionId] = useState<string | undefined>();
   const [isSending, setIsSending] = useState(false);
+  const [selectedManual, setSelectedManual] = useState<ManualSummary>();
+  const [chunkCount, setChunkCount] = useState<number>();
+
+  useEffect(() => {
+    void getLibraryStats().then((stats) => setChunkCount(stats.embeddedChunkCount)).catch(() => undefined);
+  }, []);
 
   async function sendMessage() {
     const text = input.trim();
@@ -40,7 +35,7 @@ export default function ChatScreen() {
     setIsSending(true);
 
     try {
-      const result = await askManualQuestion({ question: text, sessionId });
+      const result = await askManualQuestion({ question: text, sessionId, manualId: selectedManual?.id });
       setSessionId(result.sessionId);
       setMessages((current) => [
         ...current,
@@ -76,16 +71,18 @@ export default function ChatScreen() {
           title="답보다 근거가 먼저입니다."
           description="등록된 매뉴얼 조각을 검색하고, 답변마다 확인할 수 있는 출처를 붙입니다."
           icon="sparkles-outline"
-          action={<Badge label="1,517개 청크 연결됨" tone="success" />}
+          action={chunkCount ? <Badge label={`${chunkCount.toLocaleString()}개 청크 연결됨`} tone="success" /> : undefined}
         />
-        {messages.length === initialMessages.length ? (
-          <View style={styles.starters}>
-            <Text variant="caption" color="textTertiary">이렇게 시작해보세요</Text>
-            <View style={styles.starterButtons}>
-              {["세탁기 4C 오류", "필터 교체 주기", "초기화 방법"].map((prompt) => (
-                <Button key={prompt} label={prompt} variant="secondary" size="sm" onPress={() => setInput(prompt)} />
-              ))}
-            </View>
+        {messages.length === 0 ? (
+          <DeviceIntake
+            selectedManual={selectedManual}
+            onManualSelect={setSelectedManual}
+            onIssueSelect={(issue) => setInput(`${selectedManual?.modelName ?? selectedManual?.title ?? "이 기기"}에서 ${issue}`)}
+          />
+        ) : selectedManual ? (
+          <View style={styles.contextRow}>
+            <Text variant="caption" color="textSecondary">질문 대상</Text>
+            <Button label={selectedManual.modelName || selectedManual.title} variant="secondary" size="sm" onPress={() => setSelectedManual(undefined)} />
           </View>
         ) : null}
         <ChatMessageList messages={messages} isSending={isSending} />
@@ -112,5 +109,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 8
-  }
+  },
+  contextRow: { alignItems: "center", flexDirection: "row", gap: 8, marginBottom: 8 }
 });
