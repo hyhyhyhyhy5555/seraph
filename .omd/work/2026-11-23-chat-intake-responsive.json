@@ -1,0 +1,82 @@
+{
+  "intent": "implement",
+  "task": "Pretendard 기반 FE/RN 전면 리팩토링과 채팅 시작 단계의 제품·문제 식별 UX 설계",
+  "consumer_route": "/chat on Expo web and React Native",
+  "acceptance": [
+    "첫 진입에서 사용자가 기기 카테고리와 제품을 식별하고 막힌 내용을 입력할 수 있다",
+    "기기 정보를 모를 때도 자유 질문으로 진행할 수 있다",
+    "모바일, 폴더블/플립, 태블릿, 데스크톱에서 타이포그래피와 요소 밀도가 단계적으로 조정된다",
+    "Pretendard가 웹과 네이티브에 동일하게 적용된다",
+    "기존 RAG 질문 전송과 출처 표시 동작이 유지된다"
+  ],
+  "protected_behaviors": [
+    "질문 입력과 전송",
+    "세션 유지",
+    "RAG 답변 및 citation 렌더링",
+    "검색·채팅·메뉴 탭 이동"
+  ],
+  "protected_contract": {
+    "cardinality": ["하단/측면 주요 탭 3개 유지", "질문 전송 진입점 최소 1개 유지"],
+    "state_transitions": [
+      "초기 진입 -> 제품 식별 보조 -> 문제 입력 -> 답변과 출처",
+      "기기 모름 -> 자유 질문 -> 검색 결과가 부족하면 추가 질문"
+    ],
+    "facts": [
+      "제품 카테고리 48개",
+      "DB 전체 청크 10,253개",
+      "Expo React Native와 웹 공유 코드",
+      "Expo verified_v2 레퍼런스 선택",
+      "Pretendard 명시 적용"
+    ],
+    "change_authority": "original-user-task-only"
+  },
+  "visual_equity": [
+    {
+      "identity": "잉크 블랙, 웜 화이트, 라임 신호색",
+      "user_value": "검색과 근거 상태를 빠르게 구분",
+      "before_evidence": "src/theme/colors.ts and current /chat screenshot",
+      "decision": "reinforce",
+      "change_authority": "repository fact and selected Expo direction"
+    },
+    {
+      "identity": "근거 우선 채팅과 citation 카드",
+      "user_value": "AI 답변의 신뢰성 확인",
+      "before_evidence": "app/(tabs)/chat.tsx and src/features/chat/ChatMessageList.tsx",
+      "decision": "preserve",
+      "change_authority": "original user task"
+    }
+  ],
+  "evidence": [
+    "current /chat screenshot",
+    "app/(tabs)/chat.tsx",
+    "src/features/chat",
+    "src/theme",
+    "src/data/manualCatalog.ts"
+  ],
+  "unknowns": [
+    "제품 선택 상태를 URL/세션에 영구 보존할지 여부",
+    "폴더블 힌지 API 사용 가능 여부"
+  ],
+  "implementation_owner": "main-agent",
+  "verification": {
+    "routes": ["/", "/chat", "/menu"],
+    "viewports": ["mobile", "foldable", "tablet", "desktop"],
+    "states": ["initial", "device-selected", "question-entered", "answer-with-citations", "error"],
+    "commands": ["npm run check", "npm run build:web", "npx expo-doctor"],
+    "budget": {
+      "required": ["typecheck", "web build", "responsive route checks"],
+      "optional": ["native simulator smoke"],
+      "delivery_reserve": true,
+      "first_product_edit": "50%",
+      "advisory_to_first_edit": "min(90s, 10%)",
+      "stop_optional_verification": "80%",
+      "begin_final_delivery": "90%"
+    }
+  },
+  "first_safe_edit": {
+    "target": "font loading and shared typography tokens",
+    "smallest_useful_change": "load Pretendard and route every Text variant through the shared family",
+    "protected_contract_effect": "none",
+    "acceptance_check": "web and native typography render without fallback warnings"
+  }
+}

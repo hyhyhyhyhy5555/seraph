@@ -6,6 +6,7 @@ import {
 } from "react-native";
 
 import { colors, type ColorToken } from "@/theme/colors";
+import { useResponsiveLayout } from "@/theme/responsive";
 import { typography } from "@/theme/tokens";
 
 export type TextVariant = keyof typeof typography;
@@ -21,16 +22,35 @@ export function Text({
   style,
   ...props
 }: TextProps) {
+  const { fontScale } = useResponsiveLayout();
+  const variantStyle = typography[variant];
+  const fontFamily = variantStyle.fontWeight === "400"
+    ? "Pretendard"
+    : variantStyle.fontWeight === "600"
+      ? "PretendardSemiBold"
+      : "PretendardBold";
+
   return (
     <NativeText
       {...props}
-      style={[styles.base, typography[variant] as TextStyle, { color: colors[color] }, style]}
+      style={[
+        styles.base,
+        variantStyle as TextStyle,
+        {
+          color: colors[color],
+          fontFamily,
+          fontSize: variantStyle.fontSize * fontScale,
+          lineHeight: variantStyle.lineHeight * fontScale
+        },
+        style
+      ]}
     />
   );
 }
 
 const styles = StyleSheet.create({
   base: {
-    includeFontPadding: false
+    includeFontPadding: false,
+    fontWeight: "normal"
   }
 });

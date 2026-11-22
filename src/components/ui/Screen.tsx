@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { colors } from "@/theme/colors";
+import { useResponsiveLayout } from "@/theme/responsive";
 import { sizes, spacing } from "@/theme/tokens";
 
 type ScreenProps = {
@@ -25,11 +26,17 @@ export function Screen({
   keyboardShouldPersistTaps,
   scroll = false
 }: ScreenProps) {
+  const { horizontalPadding, isCompact } = useResponsiveLayout();
+  const responsiveContentStyle = {
+    paddingHorizontal: horizontalPadding,
+    paddingTop: isCompact ? spacing.md : spacing.xl
+  };
+
   if (scroll) {
     return (
       <SafeAreaView style={styles.safeArea}>
         <ScrollView
-          contentContainerStyle={[styles.content, styles.scrollContent, contentContainerStyle]}
+          contentContainerStyle={[styles.content, responsiveContentStyle, styles.scrollContent, contentContainerStyle]}
           keyboardShouldPersistTaps={keyboardShouldPersistTaps}
           style={styles.scroll}
         >
@@ -41,7 +48,7 @@ export function Screen({
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={[styles.content, styles.fixedContent, contentContainerStyle]}>{children}</View>
+      <View style={[styles.content, responsiveContentStyle, styles.fixedContent, contentContainerStyle]}>{children}</View>
     </SafeAreaView>
   );
 }
@@ -57,8 +64,6 @@ const styles = StyleSheet.create({
   content: {
     alignSelf: "center",
     maxWidth: sizes.contentMaxWidth,
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.xl,
     width: "100%"
   },
   scrollContent: {

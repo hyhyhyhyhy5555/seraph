@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { StyleSheet, View } from "react-native";
 
 import { colors } from "@/theme/colors";
+import { useResponsiveLayout } from "@/theme/responsive";
 import { radii, spacing } from "@/theme/tokens";
 
 import { Icon, type IconName } from "./Icon";
@@ -16,8 +17,10 @@ type ScreenHeaderProps = {
 };
 
 export function ScreenHeader({ action, description, eyebrow, icon, title }: ScreenHeaderProps) {
+  const { isCompact, isFoldable } = useResponsiveLayout();
+  const isNarrow = isCompact || isFoldable;
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isNarrow && styles.containerNarrow]}>
       <View style={styles.topRow}>
         <View style={styles.brandRow}>
           <View style={styles.brandMark}>
@@ -27,7 +30,7 @@ export function ScreenHeader({ action, description, eyebrow, icon, title }: Scre
         </View>
         {action}
       </View>
-      <View style={styles.heroRow}>
+      <View style={[styles.heroRow, isNarrow && styles.heroRowNarrow]}>
         <View style={styles.copy}>
           <Text variant="label" color="textTertiary" style={styles.eyebrow}>
             {eyebrow}
@@ -35,7 +38,7 @@ export function ScreenHeader({ action, description, eyebrow, icon, title }: Scre
           <Text variant="display">{title}</Text>
           <Text color="textSecondary" style={styles.description}>{description}</Text>
         </View>
-        <View style={styles.iconFrame}>
+        <View style={[styles.iconFrame, isNarrow && styles.iconFrameNarrow]}>
           <Icon name={icon} size={30} color="primary" />
         </View>
       </View>
@@ -47,6 +50,10 @@ const styles = StyleSheet.create({
   container: {
     gap: spacing.xl,
     marginBottom: spacing.xxl
+  },
+  containerNarrow: {
+    gap: spacing.md,
+    marginBottom: spacing.lg
   },
   topRow: {
     alignItems: "center",
@@ -78,6 +85,9 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
     justifyContent: "space-between"
   },
+  heroRowNarrow: {
+    alignItems: "flex-start"
+  },
   iconFrame: {
     alignItems: "center",
     backgroundColor: colors.signal,
@@ -85,6 +95,10 @@ const styles = StyleSheet.create({
     height: 64,
     justifyContent: "center",
     width: 64
+  },
+  iconFrameNarrow: {
+    height: 48,
+    width: 48
   },
   copy: {
     flex: 1,
