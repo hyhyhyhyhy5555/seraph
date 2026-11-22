@@ -105,8 +105,8 @@ const styles = StyleSheet.create({
   },
   content: {
     gap: spacing.sm,
-    paddingBottom: spacing.md,
-    paddingTop: spacing.xs
+    paddingBottom: spacing.xl,
+    paddingTop: spacing.sm
   },
   messageRow: {
     alignItems: "flex-end",
@@ -122,11 +122,11 @@ const styles = StyleSheet.create({
   },
   avatar: {
     alignItems: "center",
-    backgroundColor: colors.primarySoft,
-    borderRadius: radii.pill,
-    height: 32,
+    backgroundColor: colors.signal,
+    borderRadius: radii.sm,
+    height: 34,
     justifyContent: "center",
-    width: 32
+    width: 34
   },
   bubble: {
     borderRadius: radii.lg,

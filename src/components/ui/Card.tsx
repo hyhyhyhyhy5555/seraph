@@ -29,7 +29,7 @@ export function Card({
 
 const styles = StyleSheet.create({
   base: {
-    borderRadius: radii.lg
+    borderRadius: radii.md
   },
   outlined: {
     backgroundColor: colors.surface,

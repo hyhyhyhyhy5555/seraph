@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 
-import { IconButton, Screen, ScreenHeader, TextField, type IconName } from "@/components/ui";
+import { Icon, IconButton, Screen, ScreenHeader, Text, TextField, type IconName } from "@/components/ui";
 import {
   catalog,
   findManualById,
@@ -13,6 +13,7 @@ import {
   type SubCategory
 } from "@/data/manualCatalog";
 import { CategoryGrid, ManualList, SearchPath } from "@/features/search";
+import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/tokens";
 
 const majorCategoryIcons: Record<string, IconName> = {
@@ -86,13 +87,18 @@ export default function SearchScreen() {
   return (
     <Screen scroll keyboardShouldPersistTaps="handled">
       <ScreenHeader
-        eyebrow="SERAPH MANUALS"
-        title="필요한 설명서를 빠르게"
-        description="제품군부터 모델명까지 탐색하고 공식 설명서 원문을 확인하세요."
+        eyebrow="MANUAL LIBRARY"
+        title="막힌 순간, 설명서부터 찾습니다."
+        description="모델명·증상·제조사를 검색하고, 필요한 문서와 근거까지 한 흐름에서 확인하세요."
         icon="documents-outline"
       />
 
-      <View style={styles.searchArea}>
+      <View style={styles.searchPanel}>
+        <View style={styles.searchIntro}>
+          <View style={styles.liveDot} />
+          <Text variant="label" color="onPrimary">문서 검색</Text>
+          <Text color="textTertiary" style={styles.searchHint}>제품 뒷면의 모델명을 입력하면 가장 정확합니다.</Text>
+        </View>
         <TextField
           accessibilityLabel="설명서 검색"
           endAdornment={
@@ -111,11 +117,16 @@ export default function SearchScreen() {
           returnKeyType="search"
           value={query}
         />
+        <View style={styles.metrics}>
+          <Metric icon="document-text-outline" value={`${manuals.length}`} label="확인 가능한 문서" />
+          <Metric icon="layers-outline" value={`${catalog.length}`} label="주요 제품군" />
+          <Metric icon="sparkles-outline" value="AI" label="문서 근거 답변" />
+        </View>
       </View>
 
       {isSearching ? (
         <ManualList
-          title="검색 결과"
+          title={`‘${query.trim()}’ 검색 결과`}
           manuals={results}
           emptyTitle="일치하는 설명서가 없습니다"
           emptyDescription="제조사, 제품군 또는 모델명을 다른 표현으로 입력해보세요."
@@ -140,7 +151,7 @@ export default function SearchScreen() {
 
           {!selectedMajor ? (
             <CategoryGrid
-              title="제품 카테고리"
+              title="어떤 제품을 찾고 있나요?"
               items={catalog}
               getIcon={(item) => majorCategoryIcons[item.id] ?? "grid-outline"}
               getMeta={(item) => `${item.subcategories.length}개 제품군`}
@@ -167,7 +178,7 @@ export default function SearchScreen() {
           ) : null}
 
           <ManualList
-            title="추천 설명서"
+            title="바로 확인할 수 있는 설명서"
             manuals={visibleManuals}
             emptyTitle="등록된 설명서가 없습니다"
             emptyDescription="이 카테고리의 설명서를 준비하고 있습니다."
@@ -178,8 +189,52 @@ export default function SearchScreen() {
   );
 }
 
+function Metric({ icon, label, value }: { icon: IconName; label: string; value: string }) {
+  return (
+    <View style={styles.metric}>
+      <Icon name={icon} size="sm" color="textTertiary" />
+      <Text variant="heading" color="onPrimary">{value}</Text>
+      <Text variant="caption" color="textTertiary">{label}</Text>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
-  searchArea: {
-    marginBottom: spacing.xxs
+  searchPanel: {
+    backgroundColor: colors.primary,
+    borderRadius: 18,
+    gap: spacing.md,
+    padding: spacing.xl
+  },
+  searchIntro: {
+    alignItems: "center",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: spacing.xs
+  },
+  liveDot: {
+    backgroundColor: colors.signal,
+    borderRadius: 999,
+    height: 8,
+    width: 8
+  },
+  searchHint: {
+    flexBasis: 240,
+    flexGrow: 1,
+    textAlign: "right"
+  },
+  metrics: {
+    borderTopColor: "#363A34",
+    borderTopWidth: 1,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: spacing.sm,
+    paddingTop: spacing.md
+  },
+  metric: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: spacing.xs,
+    minWidth: 180
   }
 });

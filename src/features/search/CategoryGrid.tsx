@@ -28,7 +28,7 @@ export function CategoryGrid<T extends NamedItem>({
     <View style={styles.section}>
       <SectionHeader title={title} count={items.length} />
       <View style={styles.grid}>
-        {items.map((item) => (
+        {items.map((item, index) => (
           <Pressable
             accessibilityHint={`${getMeta(item)} 항목 열기`}
             accessibilityLabel={item.name}
@@ -37,11 +37,14 @@ export function CategoryGrid<T extends NamedItem>({
             onPress={() => onPress(item)}
             style={({ pressed }) => [styles.item, pressed && styles.itemPressed]}
           >
-            <Card padding="md" style={styles.card}>
+            <Card padding="lg" style={styles.card}>
               <View style={styles.iconFrame}>
                 <Icon name={getIcon?.(item) ?? "folder-open-outline"} color="primary" />
               </View>
               <View style={styles.copy}>
+                <Text variant="caption" color="textTertiary">
+                  {String(index + 1).padStart(2, "0")}
+                </Text>
                 <Text variant="bodyStrong" numberOfLines={2}>
                   {item.name}
                 </Text>
@@ -68,7 +71,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm
   },
   item: {
-    flexBasis: "47%",
+    flexBasis: "46%",
     flexGrow: 1,
     minWidth: 150
   },
@@ -77,18 +80,17 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.985 }]
   },
   card: {
-    alignItems: "center",
-    flexDirection: "row",
-    gap: spacing.sm,
-    minHeight: 88
+    alignItems: "flex-start",
+    gap: spacing.md,
+    minHeight: 156
   },
   iconFrame: {
     alignItems: "center",
-    backgroundColor: colors.primarySoft,
-    borderRadius: radii.md,
-    height: 40,
+    backgroundColor: colors.signal,
+    borderRadius: radii.sm,
+    height: 44,
     justifyContent: "center",
-    width: 40
+    width: 44
   },
   copy: {
     flex: 1,

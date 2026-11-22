@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 
-import { Badge, Screen, ScreenHeader } from "@/components/ui";
+import { Badge, Button, Screen, ScreenHeader, Text } from "@/components/ui";
 import { ChatComposer, ChatMessageList, type ChatMessage } from "@/features/chat";
 import { askManualQuestion } from "@/lib/api";
 
@@ -72,12 +72,22 @@ export default function ChatScreen() {
         style={styles.keyboard}
       >
         <ScreenHeader
-          eyebrow="SERAPH AI"
-          title="설명서에게 물어보세요"
-          description="등록된 문서를 검색해 출처와 함께 답변합니다."
+          eyebrow="GROUNDED ASSISTANT"
+          title="답보다 근거가 먼저입니다."
+          description="등록된 매뉴얼 조각을 검색하고, 답변마다 확인할 수 있는 출처를 붙입니다."
           icon="sparkles-outline"
-          action={<Badge label="문서 기반" tone="success" />}
+          action={<Badge label="1,517개 청크 연결됨" tone="success" />}
         />
+        {messages.length === initialMessages.length ? (
+          <View style={styles.starters}>
+            <Text variant="caption" color="textTertiary">이렇게 시작해보세요</Text>
+            <View style={styles.starterButtons}>
+              {["세탁기 4C 오류", "필터 교체 주기", "초기화 방법"].map((prompt) => (
+                <Button key={prompt} label={prompt} variant="secondary" size="sm" onPress={() => setInput(prompt)} />
+              ))}
+            </View>
+          </View>
+        ) : null}
         <ChatMessageList messages={messages} isSending={isSending} />
         <ChatComposer
           value={input}
@@ -93,5 +103,14 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
   keyboard: {
     flex: 1
+  },
+  starters: {
+    gap: 8,
+    marginBottom: 12
+  },
+  starterButtons: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8
   }
 });

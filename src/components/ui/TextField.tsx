@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: radii.md,
+    borderRadius: radii.sm,
     borderWidth: 1,
     flexDirection: "row",
     gap: spacing.sm,
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     paddingTop: spacing.xs
   },
   fieldFocused: {
-    borderColor: colors.primary,
+    borderColor: colors.text,
     borderWidth: 2,
     paddingLeft: spacing.md - 1,
     paddingRight: spacing.xs - 1
@@ -121,6 +121,7 @@ const styles = StyleSheet.create({
   input: {
     color: colors.text,
     flex: 1,
+    minHeight: sizes.touchTarget,
     minWidth: 0,
     padding: 0,
     ...typography.body

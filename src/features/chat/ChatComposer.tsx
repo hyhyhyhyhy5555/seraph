@@ -42,13 +42,12 @@ export function ChatComposer({ disabled, onChangeText, onSend, value }: ChatComp
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.background,
-    borderTopColor: colors.border,
-    borderTopWidth: 1,
+    backgroundColor: colors.surface,
+    borderColor: colors.borderStrong,
+    borderRadius: 14,
+    borderWidth: 1,
     gap: spacing.xxs,
-    marginHorizontal: -spacing.lg,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm
+    padding: spacing.sm
   },
   hint: {
     paddingHorizontal: spacing.xxs,

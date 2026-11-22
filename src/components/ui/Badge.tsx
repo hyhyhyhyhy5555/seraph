@@ -34,7 +34,7 @@ export function Badge({ label, tone = "accent" }: BadgeProps) {
 const styles = StyleSheet.create({
   base: {
     alignSelf: "flex-start",
-    borderRadius: radii.pill,
+    borderRadius: radii.sm,
     paddingHorizontal: spacing.sm,
     paddingVertical: 6
   },

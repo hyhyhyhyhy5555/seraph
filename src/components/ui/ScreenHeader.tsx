@@ -19,17 +19,25 @@ export function ScreenHeader({ action, description, eyebrow, icon, title }: Scre
   return (
     <View style={styles.container}>
       <View style={styles.topRow}>
-        <View style={styles.iconFrame}>
-          <Icon name={icon} size="lg" color="primary" />
+        <View style={styles.brandRow}>
+          <View style={styles.brandMark}>
+            <View style={styles.brandDot} />
+          </View>
+          <Text variant="label">SERAPH</Text>
         </View>
         {action}
       </View>
-      <View style={styles.copy}>
-        <Text variant="label" color="primary">
-          {eyebrow}
-        </Text>
-        <Text variant="display">{title}</Text>
-        <Text color="textSecondary">{description}</Text>
+      <View style={styles.heroRow}>
+        <View style={styles.copy}>
+          <Text variant="label" color="textTertiary" style={styles.eyebrow}>
+            {eyebrow}
+          </Text>
+          <Text variant="display">{title}</Text>
+          <Text color="textSecondary" style={styles.description}>{description}</Text>
+        </View>
+        <View style={styles.iconFrame}>
+          <Icon name={icon} size={30} color="primary" />
+        </View>
       </View>
     </View>
   );
@@ -37,23 +45,56 @@ export function ScreenHeader({ action, description, eyebrow, icon, title }: Scre
 
 const styles = StyleSheet.create({
   container: {
-    gap: spacing.md,
-    marginBottom: spacing.xl
+    gap: spacing.xl,
+    marginBottom: spacing.xxl
   },
   topRow: {
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between"
   },
+  brandRow: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: spacing.xs
+  },
+  brandMark: {
+    alignItems: "center",
+    backgroundColor: colors.primary,
+    borderRadius: radii.sm,
+    height: 28,
+    justifyContent: "center",
+    width: 28
+  },
+  brandDot: {
+    backgroundColor: colors.signal,
+    borderRadius: radii.pill,
+    height: 9,
+    width: 9
+  },
+  heroRow: {
+    alignItems: "flex-end",
+    flexDirection: "row",
+    gap: spacing.lg,
+    justifyContent: "space-between"
+  },
   iconFrame: {
     alignItems: "center",
-    backgroundColor: colors.primarySoft,
-    borderRadius: radii.lg,
-    height: 48,
+    backgroundColor: colors.signal,
+    borderRadius: radii.xl,
+    height: 64,
     justifyContent: "center",
-    width: 48
+    width: 64
   },
   copy: {
-    gap: spacing.xs
+    flex: 1,
+    gap: spacing.xs,
+    maxWidth: 700
+  },
+  eyebrow: {
+    letterSpacing: 1.6
+  },
+  description: {
+    maxWidth: 620
   }
 });

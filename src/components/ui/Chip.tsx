@@ -53,8 +53,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm
   },
   active: {
-    backgroundColor: colors.primarySoft,
-    borderColor: colors.surfaceAccentStrong
+    backgroundColor: colors.signal,
+    borderColor: colors.signal
   },
   pressed: {
     opacity: 0.68

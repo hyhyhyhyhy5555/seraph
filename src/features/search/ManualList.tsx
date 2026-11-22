@@ -48,7 +48,7 @@ type ManualCardProps = {
 
 function ManualCard({ manual }: ManualCardProps) {
   return (
-    <Card variant="elevated" padding="lg">
+    <Card variant="outlined" padding="lg" style={styles.card}>
       <View style={styles.cardHeader}>
         <View style={styles.documentIcon}>
           <Icon name="document-text-outline" color="primary" />
@@ -59,7 +59,7 @@ function ManualCard({ manual }: ManualCardProps) {
           </Text>
           <Text variant="heading">{manual.title}</Text>
         </View>
-        <Badge label={manual.manufacturer} />
+        <Badge label={`샘플 · ${manual.manufacturer}`} tone="neutral" />
       </View>
 
       <Text color="textSecondary" style={styles.summary}>
@@ -101,6 +101,10 @@ const styles = StyleSheet.create({
   list: {
     gap: spacing.sm
   },
+  card: {
+    borderLeftColor: colors.primary,
+    borderLeftWidth: 4
+  },
   cardHeader: {
     alignItems: "flex-start",
     flexDirection: "row",
@@ -108,8 +112,8 @@ const styles = StyleSheet.create({
   },
   documentIcon: {
     alignItems: "center",
-    backgroundColor: colors.primarySoft,
-    borderRadius: 12,
+    backgroundColor: colors.signal,
+    borderRadius: 8,
     height: 40,
     justifyContent: "center",
     width: 40

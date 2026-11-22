@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.surfaceSubtle,
     borderColor: colors.border,
-    borderRadius: radii.lg,
+    borderRadius: radii.md,
     borderStyle: "dashed",
     borderWidth: 1,
     gap: spacing.sm,
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   },
   iconFrame: {
     alignItems: "center",
-    backgroundColor: colors.primarySoft,
+    backgroundColor: colors.signal,
     borderRadius: radii.pill,
     height: 48,
     justifyContent: "center",

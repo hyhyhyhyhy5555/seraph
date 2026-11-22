@@ -57,15 +57,15 @@ const styles = StyleSheet.create({
   content: {
     alignSelf: "center",
     maxWidth: sizes.contentMaxWidth,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.xl,
     width: "100%"
   },
   scrollContent: {
-    paddingBottom: spacing.xxl
+    paddingBottom: spacing.xxxl
   },
   fixedContent: {
     flex: 1,
-    paddingBottom: spacing.sm
+    paddingBottom: spacing.md
   }
 });

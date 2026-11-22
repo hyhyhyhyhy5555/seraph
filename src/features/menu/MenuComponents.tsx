@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import { Badge, Card, Icon, Text, type IconName } from "@/components/ui";
 import { colors } from "@/theme/colors";
@@ -8,25 +8,26 @@ export type MenuItemData = {
   description: string;
   icon: IconName;
   id: string;
+  status: string;
   title: string;
 };
 
 export function AppSummaryCard() {
   return (
-    <Card variant="tinted" padding="lg" style={styles.summaryCard}>
+    <Card variant="outlined" padding="lg" style={styles.summaryCard}>
       <View style={styles.summaryIcon}>
         <Icon name="book-outline" size="lg" color="primary" />
       </View>
       <View style={styles.summaryCopy}>
-        <Text variant="caption" color="primary">
-          현재 버전
+        <Text variant="caption" color="signal">
+          SERAPH / EARLY ACCESS
         </Text>
-        <Text variant="title">Seraph MVP</Text>
-        <Text variant="caption" color="textSecondary">
-          설명서 탐색과 AI 질의를 한곳에서
+        <Text variant="title" color="onPrimary">문서를 근거로 답하는 도구</Text>
+        <Text variant="caption" color="onPrimary">
+          검색 · 원문 확인 · 근거 기반 AI 질의
         </Text>
       </View>
-      <Badge label="초기 설계" tone="success" />
+      <Badge label="로컬 환경" tone="warning" />
     </Card>
   );
 }
@@ -39,11 +40,10 @@ export function MenuList({ items }: MenuListProps) {
   return (
     <View style={styles.list}>
       {items.map((item) => (
-        <Pressable
-          accessibilityLabel={`${item.title}, ${item.description}`}
-          accessibilityRole="button"
+        <View
+          accessibilityLabel={`${item.title}, ${item.description}, ${item.status}`}
           key={item.id}
-          style={({ pressed }) => [styles.menuItem, pressed && styles.pressed]}
+          style={styles.menuItem}
         >
           <View style={styles.menuIcon}>
             <Icon name={item.icon} color="primary" />
@@ -54,8 +54,8 @@ export function MenuList({ items }: MenuListProps) {
               {item.description}
             </Text>
           </View>
-          <Icon name="chevron-forward" color="textTertiary" />
-        </Pressable>
+          <Badge label={item.status} tone="success" />
+        </View>
       ))}
     </View>
   );
@@ -65,11 +65,13 @@ const styles = StyleSheet.create({
   summaryCard: {
     alignItems: "center",
     flexDirection: "row",
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
     gap: spacing.md
   },
   summaryIcon: {
     alignItems: "center",
-    backgroundColor: colors.surface,
+    backgroundColor: colors.signal,
     borderRadius: radii.lg,
     height: 52,
     justifyContent: "center",
@@ -88,7 +90,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderRadius: radii.lg,
+    borderRadius: radii.md,
     borderWidth: 1,
     flexDirection: "row",
     gap: spacing.sm,
@@ -108,9 +110,5 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: spacing.xxs,
     minWidth: 0
-  },
-  pressed: {
-    opacity: 0.68,
-    transform: [{ scale: 0.99 }]
   }
 });

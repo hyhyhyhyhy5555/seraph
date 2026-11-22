@@ -1,9 +1,10 @@
 import { Tabs } from "expo-router";
-import { StyleSheet, View } from "react-native";
+import { useEffect, useState } from "react";
+import { Platform, StyleSheet, View, useWindowDimensions } from "react-native";
 
 import { Icon, type IconName } from "@/components/ui";
 import { colors } from "@/theme/colors";
-import { radii } from "@/theme/tokens";
+import { radii, sizes } from "@/theme/tokens";
 
 type TabIconProps = {
   focused: boolean;
@@ -24,16 +25,26 @@ function TabIcon({ focused, focusedName, name }: TabIconProps) {
 }
 
 export default function TabsLayout() {
+  const { width } = useWindowDimensions();
+  const [isWideWeb, setIsWideWeb] = useState(false);
+
+  useEffect(() => {
+    setIsWideWeb(Platform.OS === "web" && width >= 960);
+  }, [width]);
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
+        tabBarPosition: isWideWeb ? "left" : "bottom",
         tabBarActiveTintColor: colors.primary,
+        tabBarActiveBackgroundColor: isWideWeb ? colors.surfaceAccent : "transparent",
+        tabBarInactiveBackgroundColor: "transparent",
         tabBarInactiveTintColor: colors.textTertiary,
         tabBarHideOnKeyboard: true,
         tabBarLabelStyle: styles.label,
-        tabBarStyle: styles.tabBar,
-        tabBarItemStyle: styles.tabItem
+        tabBarStyle: [styles.tabBar, isWideWeb && styles.tabBarWide],
+        tabBarItemStyle: [styles.tabItem, isWideWeb && styles.tabItemWide]
       }}
     >
       <Tabs.Screen
@@ -78,12 +89,26 @@ const styles = StyleSheet.create({
   tabBar: {
     backgroundColor: colors.surface,
     borderTopColor: colors.border,
-    height: 76,
+    height: 78,
     paddingBottom: 10,
     paddingTop: 7
   },
   tabItem: {
     paddingVertical: 3
+  },
+  tabBarWide: {
+    borderRightColor: colors.border,
+    borderRightWidth: 1,
+    borderTopWidth: 0,
+    height: "100%",
+    paddingHorizontal: 14,
+    paddingTop: 32,
+    width: sizes.navigationRail
+  },
+  tabItemWide: {
+    borderRadius: radii.md,
+    maxHeight: 64,
+    paddingHorizontal: 10
   },
   label: {
     fontSize: 12,
@@ -98,6 +123,6 @@ const styles = StyleSheet.create({
     width: 52
   },
   iconFrameFocused: {
-    backgroundColor: colors.primarySoft
+    backgroundColor: colors.signal
   }
 });
