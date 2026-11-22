@@ -645,6 +645,23 @@ app.get(
 );
 
 app.get(
+  "/api/library-stats",
+  asyncHandler(async (_request, response) => {
+    const result = await query(`
+      select
+        (select count(*)::int from manuals) as "manualCount",
+        (select count(*)::int from manual_chunks) as "chunkCount",
+        (select count(*)::int from manual_chunks where embedding is not null) as "embeddedChunkCount",
+        (select count(*)::int from categories where exists (
+          select 1 from manuals where manuals.category_id = categories.id
+        )) as "categoryCount"
+    `);
+
+    response.json({ data: result.rows[0] });
+  })
+);
+
+app.get(
   "/api/categories",
   asyncHandler(async (_request, response) => {
     const result = await query<CategoryRow>(`
