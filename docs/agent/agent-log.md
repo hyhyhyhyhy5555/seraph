@@ -136,3 +136,10 @@
 - 첫 질문을 “어느 기기에서 막히셨나요?”로 바꾸고 실제 DB 카테고리와 제품을 선택한 뒤 오류·사용법·관리·교체 주제로 이어지는 흐름을 추가했습니다.
 - 제품을 몰라도 자유 질문을 건너뛸 수 있게 유지하고, 선택한 제품 ID를 RAG 요청에 전달하며 실제 임베딩 청크 수를 화면에 표시하도록 연결했습니다.
 - 웹 내비게이션을 4단계 화면 폭에 맞춰 전환하고 앱·백엔드 TypeScript 검사 및 웹 정적 export를 통과했습니다.
+
+## 2026-11-23 01:03:51 KST
+
+### RN 적응형 테마 시스템
+
+- `app.json`의 `userInterfaceStyle`을 `automatic`으로 전환하고 iOS(`DynamicColorIOS`)·Android(`PlatformColor`)·웹 CSS 변수(`--seraph-*`) 기반의 라이트/다크 색상 토큰을 구성했습니다.
+- `@react-native-async-storage/async-storage`와 `ThemeProvider`를 추가해 시스템·라이트·다크 화면 모드 설정을 기기와 웹에서 유지·반영하도록 연결했습니다.

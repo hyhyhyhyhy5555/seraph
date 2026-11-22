@@ -25,7 +25,7 @@ export function Icon({ name, size = "md", color = "textSecondary" }: IconProps) 
       importantForAccessibility="no-hide-descendants"
       name={name}
       size={typeof size === "number" ? size : iconSizes[size]}
-      color={colors[color]}
+      color={colors[color] as string}
     />
   );
 }
