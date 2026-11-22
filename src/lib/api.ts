@@ -48,8 +48,13 @@ export async function askManualQuestion(params: {
 
 export type Category = {
   id: string;
+  parentId?: string | null;
+  depth?: number;
+  slug?: string;
   name: string;
   slugPath: string;
+  description?: string | null;
+  sortOrder?: number;
   manualCount: number;
   children: Category[];
 };
@@ -58,6 +63,13 @@ export type ManualSummary = {
   id: string;
   title: string;
   modelName: string | null;
+  languageCode?: string | null;
+  sourceUrl?: string | null;
+  pdfUrl?: string | null;
+  sourceType?: string | null;
+  ingestionStatus?: string | null;
+  rightsStatus?: string | null;
+  summary?: string | null;
   category: { id: string; name: string; slugPath: string };
   manufacturer: { id: string; name: string; slug: string } | null;
 };
@@ -82,6 +94,20 @@ export function getCategories() {
 
 export function getManuals(categoryId: string) {
   return getData<ManualSummary[]>(`/api/manuals?categoryId=${encodeURIComponent(categoryId)}&limit=20`);
+}
+
+export function searchDbManuals(params: {
+  q?: string;
+  categoryId?: string;
+  manufacturerId?: string;
+  limit?: number;
+} = {}) {
+  const searchParams = new URLSearchParams();
+  if (params.q?.trim()) searchParams.set("q", params.q.trim());
+  if (params.categoryId) searchParams.set("categoryId", params.categoryId);
+  if (params.manufacturerId) searchParams.set("manufacturerId", params.manufacturerId);
+  searchParams.set("limit", String(params.limit ?? 60));
+  return getData<ManualSummary[]>(`/api/manuals?${searchParams.toString()}`);
 }
 
 export function getLibraryStats() {

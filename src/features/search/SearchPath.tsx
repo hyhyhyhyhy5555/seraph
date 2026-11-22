@@ -1,24 +1,24 @@
 import { StyleSheet, View } from "react-native";
 
 import { Chip, Icon } from "@/components/ui";
-import type { DetailCategory, MajorCategory, SubCategory } from "@/data/manualCatalog";
+import type { Category } from "@/lib/api";
 import { spacing } from "@/theme/tokens";
 
 type SearchPathProps = {
   onMajor: () => void;
   onReset: () => void;
   onSub: () => void;
-  selectedDetail: DetailCategory | null;
-  selectedMajor: MajorCategory | null;
-  selectedSub: SubCategory | null;
+  selectedMajor: Category | null;
+  selectedManufacturerName: string | null;
+  selectedSub: Category | null;
 };
 
 export function SearchPath({
   onMajor,
   onReset,
   onSub,
-  selectedDetail,
   selectedMajor,
+  selectedManufacturerName,
   selectedSub
 }: SearchPathProps) {
   return (
@@ -33,13 +33,13 @@ export function SearchPath({
       {selectedSub ? (
         <>
           <Icon name="chevron-forward" size="sm" color="textTertiary" />
-          <Chip label={selectedSub.name} active={!selectedDetail} onPress={onSub} />
+          <Chip label={selectedSub.name} active={!selectedManufacturerName} onPress={onSub} />
         </>
       ) : null}
-      {selectedDetail ? (
+      {selectedManufacturerName ? (
         <>
           <Icon name="chevron-forward" size="sm" color="textTertiary" />
-          <Chip label={selectedDetail.name} active />
+          <Chip label={selectedManufacturerName} active />
         </>
       ) : null}
     </View>

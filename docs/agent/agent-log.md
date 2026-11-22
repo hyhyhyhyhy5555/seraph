@@ -162,3 +162,11 @@
 
 - `docs/agent/todo.md`를 `2026-11-23` 기준으로 점검해 `DATA-06`·매뉴얼 185개(10,253개 청크) 적재·UI 전면 개편을 완료 항목으로 반영하고 `DATA-04`·`DATA-05`·`DATA-07`의 진행 현황을 실제 DB·코드 상태에 맞게 갱신했습니다.
 - 검색 단계 무관 질의 오탐 억제·제조사 확장(`DATA-08`), KREAM `DESIGN.md` 공식 채택·shim 설치(`UI-01`), 메뉴 탭 실시간 API 연동(`UI-02`)을 남은 개발 항목에 추가했습니다.
+
+## 2026-11-23 01:32:54 KST
+
+### 검색·메뉴 탭 실DB API 연동 (`DATA-07`, `UI-02`)
+
+- 검색 탭의 정적 샘플(`manualCatalog`) 의존을 제거하고 `/api/categories`·`/api/manuals`·`/api/library-stats` 실시간 조회, 설명서 보유 제품군 우선 필터, 동적 제조사 필터와 카드 `AI 질문` → 채팅 탭 직행 연동을 구현했습니다.
+- 메뉴 탭의 하드코딩 수치를 `/api/library-stats` 실시간 조회로 교체하고 `docs/agent/todo.md`에서 `DATA-07`·`UI-02`를 완료로 반영했습니다.
+- `npm run check`, `npm run build` 및 실브라우저(`localhost:8081` + `localhost:4000`)에서 185개 매뉴얼·10,253개 청크 노출과 콘솔/네트워크 오류 0건을 검증했습니다.

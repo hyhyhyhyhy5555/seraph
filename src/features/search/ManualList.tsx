@@ -9,30 +9,38 @@ import {
   SectionHeader,
   Text
 } from "@/components/ui";
-import type { Manual } from "@/data/manualCatalog";
+import type { ManualSummary } from "@/lib/api";
 import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/tokens";
 
 type ManualListProps = {
   emptyDescription: string;
   emptyTitle: string;
-  manuals: Manual[];
+  loading?: boolean;
+  manuals: ManualSummary[];
+  onAskManual?: (manual: ManualSummary) => void;
   title: string;
 };
 
 export function ManualList({
   emptyDescription,
   emptyTitle,
+  loading = false,
   manuals,
+  onAskManual,
   title
 }: ManualListProps) {
   return (
     <View style={styles.section}>
       <SectionHeader title={title} count={manuals.length} />
-      {manuals.length > 0 ? (
+      {loading ? (
+        <Card variant="elevated" padding="lg">
+          <Text color="textSecondary">등록된 설명서를 불러오는 중입니다...</Text>
+        </Card>
+      ) : manuals.length > 0 ? (
         <View style={styles.list}>
           {manuals.map((manual) => (
-            <ManualCard key={manual.id} manual={manual} />
+            <ManualCard key={manual.id} manual={manual} onAskManual={onAskManual} />
           ))}
         </View>
       ) : (
@@ -43,10 +51,24 @@ export function ManualList({
 }
 
 type ManualCardProps = {
-  manual: Manual;
+  manual: ManualSummary;
+  onAskManual?: (manual: ManualSummary) => void;
 };
 
-function ManualCard({ manual }: ManualCardProps) {
+function ManualCard({ manual, onAskManual }: ManualCardProps) {
+  const manufacturerLabel = manual.manufacturer?.name ?? "제조사 미상";
+  const isSample = manual.sourceType === "sample";
+  const isPending = manual.ingestionStatus === "pending";
+  const badgeTone = isSample ? "neutral" : isPending ? "warning" : "success";
+  const badgeLabel = isSample
+    ? `샘플 · ${manufacturerLabel}`
+    : isPending
+      ? `대기 · ${manufacturerLabel}`
+      : `PDF · ${manufacturerLabel}`;
+  const pathLabel = manual.manufacturer
+    ? `${manual.category.name}  /  ${manual.manufacturer.name}`
+    : manual.category.name;
+
   return (
     <Card variant="outlined" padding="lg" style={styles.card}>
       <View style={styles.cardHeader}>
@@ -54,40 +76,53 @@ function ManualCard({ manual }: ManualCardProps) {
           <Icon name="document-text-outline" color="primary" />
         </View>
         <View style={styles.headerCopy}>
-          <Text variant="caption" color="primary" numberOfLines={1}>
-            {manual.categoryPath.join("  /  ")}
+          <Text variant="caption" color="textSecondary" numberOfLines={1}>
+            {pathLabel}
           </Text>
           <Text variant="heading">{manual.title}</Text>
         </View>
-        <Badge label={`샘플 · ${manual.manufacturer}`} tone="neutral" />
+        <Badge label={badgeLabel} tone={badgeTone} />
       </View>
 
       <Text color="textSecondary" style={styles.summary}>
-        {manual.summary}
+        {manual.summary?.trim() || "등록된 사용설명서 전문이 검색과 AI 근거 답변에 연결되어 있습니다."}
       </Text>
 
       <View style={styles.footer}>
         <View style={styles.model}>
           <Icon name="hardware-chip-outline" size="sm" color="textTertiary" />
           <Text variant="caption" color="textSecondary">
-            {manual.model}
+            {manual.modelName ?? "공용 모델"}
           </Text>
         </View>
         <View style={styles.actions}>
-          <Button
-            label="원문"
-            variant="link"
-            size="sm"
-            trailingIcon="open-outline"
-            onPress={() => void Linking.openURL(manual.sourceUrl)}
-          />
-          <Button
-            label="PDF"
-            variant="secondary"
-            size="sm"
-            leadingIcon="document-outline"
-            onPress={() => void Linking.openURL(manual.pdfUrl)}
-          />
+          {manual.sourceUrl ? (
+            <Button
+              label="원문"
+              variant="link"
+              size="sm"
+              trailingIcon="open-outline"
+              onPress={() => void Linking.openURL(manual.sourceUrl!)}
+            />
+          ) : null}
+          {manual.pdfUrl ? (
+            <Button
+              label="PDF"
+              variant="secondary"
+              size="sm"
+              leadingIcon="document-outline"
+              onPress={() => void Linking.openURL(manual.pdfUrl!)}
+            />
+          ) : null}
+          {onAskManual ? (
+            <Button
+              label="AI 질문"
+              variant="primary"
+              size="sm"
+              leadingIcon="sparkles-outline"
+              onPress={() => onAskManual(manual)}
+            />
+          ) : null}
         </View>
       </View>
     </Card>
@@ -146,6 +181,7 @@ const styles = StyleSheet.create({
   actions: {
     alignItems: "center",
     flexDirection: "row",
-    gap: spacing.xxs
+    flexWrap: "wrap",
+    gap: spacing.xs
   }
 });

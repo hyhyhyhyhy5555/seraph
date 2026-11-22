@@ -1,3 +1,4 @@
+import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 
@@ -8,6 +9,7 @@ import { askManualQuestion, getLibraryStats, type ManualSummary } from "@/lib/ap
 const initialMessages: ChatMessage[] = [];
 
 export default function ChatScreen() {
+  const params = useLocalSearchParams<{ manualId?: string; manualTitle?: string; manualModel?: string }>();
   const [messages, setMessages] = useState(initialMessages);
   const [input, setInput] = useState("");
   const [sessionId, setSessionId] = useState<string | undefined>();
@@ -18,6 +20,17 @@ export default function ChatScreen() {
   useEffect(() => {
     void getLibraryStats().then((stats) => setChunkCount(stats.embeddedChunkCount)).catch(() => undefined);
   }, []);
+
+  useEffect(() => {
+    if (!params.manualId || !params.manualTitle) return;
+    setSelectedManual({
+      id: params.manualId,
+      title: params.manualTitle,
+      modelName: params.manualModel || null,
+      category: { id: "", name: "", slugPath: "" },
+      manufacturer: null
+    });
+  }, [params.manualId, params.manualModel, params.manualTitle]);
 
   async function sendMessage() {
     const text = input.trim();
